@@ -4,7 +4,7 @@ from utility.logger import logger
 def run_app():
     try:
         logger.info("Starting the application...")
-        uvicorn.run("api.api:app", host="0.0.0.0", port=8000)
+        uvicorn.run("api", host="0.0.0.0", port=8000)
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
 
