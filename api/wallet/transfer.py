@@ -9,7 +9,7 @@ class TransferRequest(BaseModel):
     receiver_address: str
     amount: float
 
-@router.post("/transfer")
+@router.post("/wallet/transfer")
 async def transfer_sol(request: TransferRequest):
     try:
         transaction_hash = send_sol(

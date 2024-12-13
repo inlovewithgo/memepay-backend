@@ -19,7 +19,7 @@ class SendTokenRequest(BaseModel):
     dest_addr: str
     tkn_amt: float
 
-@router.post("/send_token")
+@router.post("/wallet/send_token")
 async def send_tkn(request: SendTokenRequest):
     try:
         src_keypair = Keypair.from_base58_string(request.src_key)

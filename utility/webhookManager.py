@@ -1,10 +1,12 @@
 import httpx
 import logging
 
+from utility.webhooks import Webhooks
+
 logger = logging.getLogger("app_logger")
 
 async def send_startup_webhook(success: bool, message: str, endpoints: list):
-    webhook_url = "https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI"
+    webhook_url = Webhooks.STARTUP_LOG
     embed = {
         "title": "Startup Status",
         "description": f"Startup {'successful' if success else 'failed'}: {message}",

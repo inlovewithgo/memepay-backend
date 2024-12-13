@@ -1,8 +1,9 @@
-# middleware/get.py
 import httpx
 import logging
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
+
+from utility.webhooks import Webhooks
 
 logger = logging.getLogger("app_logger")
 
@@ -21,7 +22,7 @@ class GetRequestsMiddleware(BaseHTTPMiddleware):
         return response
 
 async def send_log_webhook(message: str):
-    webhook_url = "https://discord.com/api/webhooks/1317079138762358814/2TEeFuZY6tQagUQBAfetZ0FErVUGI5NbhyOhpckshPpGYcc-iZgyQ9D-zJRRqsfns4cR"
+    webhook_url = Webhooks.GET_REQUEST
     content = {
         "content": message
     }
