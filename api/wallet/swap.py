@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from solders.keypair import Keypair
-from solders.pubkey import Pubkey
+from solders.pubkey import Pubkey as Pubkey
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.instructions import transfer_checked, TransferCheckedParams
 from utility.dataconfig import Config
@@ -51,6 +51,7 @@ async def perform_swap(request: SwapRequest):
                 raise HTTPException(status_code=400, detail="Amount must be positive")
         except ValueError:
             logger.error("Invalid amount format in request")
+            print("idk bruh")
             raise HTTPException(status_code=400, detail="Invalid amount format")
 
         # Private key validation with constant-time comparison
