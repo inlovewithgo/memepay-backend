@@ -1,13 +1,42 @@
 from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi import Depends
+from typing import Optional
+import os
 
-MONGODB_URL = ("mongodb://localhost:27017")
-client = AsyncIOMotorClient(MONGODB_URL)
-db = client.user_db
-user_collection = db.users
+class Database:
+    client: Optional[AsyncIOMotorClient] = None
+    db_name: str = "user_management"
 
-async def connect_to_mongo():
+    def __init__(self):
+        mongodb_url = ("mongodb+srv://exril:exrilatgrain@grain.4kcd1.mongodb.net/memepay")
+        if not mongodb_url:
+            mongodb_url = "mongodb+srv://exril:exrilatgrain@grain.4kcd1.mongodb.net/memepay"
+
+        try:
+            self.client = AsyncIOMotorClient(mongodb_url)
+            self.db = self.client[self.db_name]
+            self.users = self.db.users
+            self.tokens = self.db.tokens
+        except Exception as e:
+            raise Exception(f"Failed to connect to MongoDB: {str(e)}")
+
+    async def connect(self):
+        try:
+            await self.client.admin.command('ping')
+        except Exception as e:
+            raise Exception(f"Failed to connect to MongoDB: {str(e)}")
+
+    async def close(self):
+        if self.client:
+            self.client.close()
+
+
+db = Database()
+
+
+async def get_database() -> Database:
     try:
-        await client.admin.command('ping')
-        print("Successfully connected to MongoDB!")
+        await db.connect()
+        return db
     except Exception as e:
-        print(f"Error connecting to MongoDB: {e}")
+        raise Exception(f"Database connection failed: {str(e)}")
