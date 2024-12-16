@@ -74,6 +74,32 @@ class UserUpdate(BaseModel):
     roles: Optional[List[str]] = None
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
+class TokenPrice(BaseModel):
+    usd: float
+    change_24h: float
+    change_6h: float
+
+class TokenMetrics(BaseModel):
+    total_supply: float
+    circulating_supply: float
+    holders: int
+    market_cap: float
+
+class Token(BaseModel):
+    address: str
+    name: str
+    symbol: str
+    chain: str
+    decimals: int
+    price: TokenPrice
+    liquidity: float
+    age: int
+    txns_24h: int
+    volume_24h: float
+    makers_count: int
+    market_metrics: TokenMetrics
+    updated_at: datetime
+
 
 class TokenData(BaseModel):
     model_config = ConfigDict(

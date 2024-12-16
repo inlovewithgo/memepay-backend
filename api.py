@@ -6,7 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from utility.logger import logger
 from middleware.discord import start_bot
 from utility.webhookManager import send_startup_webhook
+from api.discovery.discovery import router as discovery_router
 
+
+# daal dena yeh sab endpoint url lagane mai problem aayegi sirf
 GOOGLE_CLIENT_ID = "GOOGLE_CLIENT_ID"
 GOOGLE_CLIENT_SECRET = "GOOGLE_CLIENT_SECRET"
 GOOGLE_REDIRECT_URI = "GOOGLE_REDIRECT_URI"
@@ -78,6 +81,8 @@ app.state.oauth_config = {
     "algorithm": "HS256",
     "access_token_expire_minutes": 30
 }
+
+app.include_router(discovery_router, prefix="/api/discovery", tags=["discovery"])
 
 # GOOGLE_CLIENT_ID=google_client_id
 # GOOGLE_CLIENT_SECRET=google_client_secret
