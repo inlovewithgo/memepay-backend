@@ -7,6 +7,7 @@ from middleware.web3 import w3_bsc, w3_eth, tokens_collection
 from pymongo import DESCENDING
 from utility.logger import logger
 from core.updatesingletoken import update_single_token
+from utility.updatealltokens import update_all_tokens
 
 router = APIRouter()
 
@@ -49,18 +50,6 @@ async def get_trending_tokens(timeframe: str = "24h", limit: int = 10):
 async def refresh_token(chain: str, address: str, background_tasks: BackgroundTasks):
     background_tasks.add_task(update_single_token, chain, address)
     return {"message": "Token refresh scheduled"}
-
-
-async def update_all_tokens():
-    async with aiohttp.ClientSession() as session:
-        tokens = tokens_collection.find({})
-        for token in tokens:
-            try:
-                await update_single_token(token["chain"], token["address"])
-                await asyncio.sleep(1)
-            except Exception as e:
-                logger.error(f"Error updating token {token['address']}: {str(e)}")
-
 
 @router.on_event("startup")
 async def start_background_tasks():

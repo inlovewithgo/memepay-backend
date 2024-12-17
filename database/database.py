@@ -8,9 +8,9 @@ class Database:
     db_name: str = "user_management"
 
     def __init__(self):
-        mongodb_url = ("mongodb://exril:exrilatmemepay@194.15.36.168:27017/main")
+        mongodb_url = ("mongodb://exril:exrilatmemepay@194.15.36.168:27017/admin")
         if not mongodb_url:
-            mongodb_url = "mongodb://exril:exrilatmemepay@194.15.36.168:27017/main"
+            mongodb_url = "mongodb://exril:exrilatmemepay@194.15.36.168:27017/admin"
 
         try:
             self.client = AsyncIOMotorClient(mongodb_url)

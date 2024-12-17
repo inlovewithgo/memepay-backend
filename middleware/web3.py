@@ -12,8 +12,8 @@ def init_web3_and_db():
     w3_bsc = Web3(Web3.HTTPProvider(BSC_NODE))
     w3_eth = Web3(Web3.HTTPProvider(ETHEREUM_NODE))
 
-    tokens_collection = db["tokens"]
-    pairs_collection = db["pairs"]
+    tokens_collection = db.db.tokens
+    pairs_collection = db.db.pairs
 
     tokens_collection.create_index([("address", ASCENDING)], unique=True)
     tokens_collection.create_index([("symbol", ASCENDING)])
@@ -27,6 +27,7 @@ def init_web3_and_db():
         "PANCAKESWAP_FACTORY": PANCAKESWAP_FACTORY,
         "UNISWAP_FACTORY": UNISWAP_FACTORY
     }
+
 
 web3_config = init_web3_and_db()
 w3_bsc = web3_config["w3_bsc"]
