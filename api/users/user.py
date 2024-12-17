@@ -11,7 +11,11 @@ import aiohttp
 from database.database import get_database, Database, db
 from database.models import User, UserInDB, UserUpdate, TokenData
 
-router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+router = APIRouter(
+    prefix="/api/auth",
+    tags=["Authentication"],
+    responses={404: {"description": "Not found"}},
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")

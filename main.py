@@ -5,7 +5,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import status
 from datetime import datetime
+from database.database import db
 
+from database.database import init_web3_and_db, get_web3_config
 from utility.logger import logger
 from utility.webhookManager import send_startup_webhook
 from api.discovery.discovery import router as discovery_router
@@ -23,41 +25,49 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up the application...")
 
     try:
+        # Initialize database first
+        await db.initialize()
+        logger.info("Database initialized successfully")
+
+        # Initialize Web3 config
+        web3_config = await init_web3_and_db()
+        app.state.web3_config = web3_config
+
+        # Load wallet endpoints
         wallet_path = os.path.join(os.path.dirname(__file__), "api", "wallet")
         for filename in os.listdir(wallet_path):
             if filename.endswith(".py") and filename != "__init__.py":
                 module_name = f"api.wallet.{filename[:-3]}"
                 module = importlib.import_module(module_name)
                 if hasattr(module, "router"):
-                    app.include_router(getattr(module, "router"), prefix=f"/api/{filename[:-3]}")
+                    app.include_router(getattr(module, "router"))
                     logger.info(f"Endpoint /api/{filename[:-3]} is now online")
-    except Exception as e:
-        logger.error(f"Failed to load wallet endpoints: {e}")
 
-    try:
-        user_module = importlib.import_module("api.users.user")
-        if hasattr(user_module, "router"):
-            app.include_router(user_module.router, prefix="/api/users")
-            logger.info("User authentication endpoints are now online")
-    except Exception as e:
-        logger.error(f"Failed to load user endpoints: {e}")
+        # Load user endpoints
+        userpath = os.path.join(os.path.dirname(__file__), "api", "users")
+        for filename in os.listdir(userpath):
+            if filename.endswith(".py") and filename != "__init__.py":
+                module_name = f"api.users.{filename[:-3]}"
+                module = importlib.import_module(module_name)
+                if hasattr(module, "router"):
+                    app.include_router(getattr(module, "router"))
+                    logger.info(f"Auth endpoint loaded")
 
-    try:
+        # Send startup webhook
         await send_startup_webhook(
             True,
             "Application started successfully.",
-            [
-                "Endpoint /api/transfer is now online",
-                "Endpoint /api/sendToken is now online",
-                "Endpoint /api/swap is now online",
-                "OAuth endpoints are now online",
-            ],
+            ["All endpoints are now online"]
         )
-        logger.info("Startup webhook sent successfully.")
-    except Exception as e:
-        logger.error(f"Failed to send startup webhook: {e}")
 
-    yield
+        yield
+
+    except Exception as e:
+        logger.error(f"Startup failed: {e}")
+        raise
+    finally:
+        await db.close()
+        logger.info("Application shutdown complete")
 
 
 app = FastAPI(lifespan=lifespan)
@@ -81,12 +91,8 @@ app.state.oauth_config = {
 
 app.include_router(discovery_router, prefix="/api/discovery", tags=["discovery"])
 
-@app.get(
-    "/health",
-    tags=["healthcheck"],
-    summary="Perform a Health Check",
-    status_code=status.HTTP_200_OK,
-)
+
+@app.get("/health", tags=["healthcheck"], status_code=status.HTTP_200_OK)
 async def health_check():
     return {
         "status": "healthy",
@@ -94,26 +100,10 @@ async def health_check():
     }
 
 
-async def fetch_data_from_db(collection):
-    try:
-        cursor = collection.find({})
-        documents = await cursor.to_list(length=None)  # Convert to list
-        for document in documents:
-            print(document)
-        return documents
-    except Exception as e:
-        logger.error(f"Database fetch error: {e}")
-        return []
-
-
 def main():
     import asyncio
     from hypercorn.asyncio import serve
     from hypercorn.config import Config
-
-    if not all([GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI]):
-        logger.error("Missing required environment variables for OAuth setup.")
-        exit(1)
 
     logger.info("Running the application...")
     config = Config()
