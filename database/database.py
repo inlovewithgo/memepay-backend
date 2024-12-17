@@ -3,7 +3,7 @@ from web3 import Web3
 from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 from pymongo import ASCENDING
-
+from .redis import redis_config
 
 class Database:
     def __init__(self):
@@ -31,9 +31,7 @@ class Database:
         if self.client:
             self.client.close()
 
-
 db = Database()
-
 
 class Web3Config:
     def __init__(self):
@@ -52,15 +50,13 @@ class Web3Config:
         except Exception as e:
             raise Exception(f"Failed to initialize Web3: {str(e)}")
 
-
 web3_config = Web3Config()
-
 
 async def init_web3_and_db():
     try:
         await db.initialize()
-
         await web3_config.initialize()
+        await redis_config.initialize()
 
         await db.tokens.create_index([("address", ASCENDING)], unique=True)
         await db.tokens.create_index([("symbol", ASCENDING)])
@@ -72,14 +68,14 @@ async def init_web3_and_db():
             "tokens_collection": db.tokens,
             "pairs_collection": db.pairs,
             "PANCAKESWAP_FACTORY": web3_config.PANCAKESWAP_FACTORY,
-            "UNISWAP_FACTORY": web3_config.UNISWAP_FACTORY
+            "UNISWAP_FACTORY": web3_config.UNISWAP_FACTORY,
+            "redis_client": redis_config.client
         }
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Failed to initialize services: {str(e)}"
         )
-
 
 w3_bsc = None
 w3_eth = None
@@ -88,14 +84,17 @@ pairs_collection = None
 PANCAKESWAP_FACTORY = web3_config.PANCAKESWAP_FACTORY
 UNISWAP_FACTORY = web3_config.UNISWAP_FACTORY
 
-
 async def get_web3_config():
     if not web3_config.w3_bsc or not web3_config.w3_eth:
         await web3_config.initialize()
     return web3_config
 
-
 async def get_database():
     if not db.client:
         await db.initialize()
     return db
+
+async def get_redis():
+    if not redis_config.initialized:
+        await redis_config.initialize()
+    return redis_config

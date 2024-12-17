@@ -8,7 +8,8 @@ from datetime import datetime
 from database.database import db
 
 from database.database import init_web3_and_db, get_web3_config
-from database.redis import cached, cache
+from database.redis import redis_config
+from database.redis import cached
 from utility.logger import logger
 from utility.webhookManager import send_startup_webhook
 from api.discovery.discovery import router as discovery_router
@@ -27,7 +28,7 @@ async def lifespan(app: FastAPI):
 
     try:
 
-        await cache.initialize()
+        await redis_config.initialize()
         logger.info("Redis cache initialized successfully")
 
         await db.initialize()
@@ -67,6 +68,7 @@ async def lifespan(app: FastAPI):
         raise
     finally:
         await db.close()
+        await redis_config.close()
         logger.info("Application shutdown complete")
 
 
@@ -93,6 +95,7 @@ app.include_router(discovery_router, prefix="/api/discovery", tags=["discovery"]
 
 
 @app.get("/health", tags=["healthcheck"], status_code=status.HTTP_200_OK)
+@cached(expire=60)
 async def health_check():
     return {
         "status": "healthy",

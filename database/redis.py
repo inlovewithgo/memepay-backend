@@ -3,7 +3,7 @@ from functools import wraps
 import json
 from typing import Optional, Any
 
-class RedisCacheManager:
+class RedisConfig:
     _instance = None
 
     def __new__(cls):
@@ -13,51 +13,53 @@ class RedisCacheManager:
 
     def __init__(self):
         if not hasattr(self, 'initialized'):
-            self.redis_url = "redis://exril:exrilatmemepay@194.15.36.168:6379"
-            self.redis_client = None
+            self.REDIS_URL = "redis://:exrilatmemepay@194.15.36.168:6379"
+            self.client = None
             self.initialized = False
 
     async def initialize(self):
         if not self.initialized:
-            self.redis_client = Redis.from_url(
-                self.redis_url,
-                encoding="utf-8",
-                decode_responses=True
-            )
-            self.initialized = True
+            try:
+                self.client = Redis.from_url(
+                    self.REDIS_URL,
+                    encoding="utf-8",
+                    decode_responses=True
+                )
+                await self.client.ping()
+                self.initialized = True
+            except Exception as e:
+                raise Exception(f"Failed to initialize Redis: {str(e)}")
         return self
+
+    async def close(self):
+        if self.client:
+            await self.client.close()
 
     async def get(self, key: str) -> Optional[Any]:
         try:
-            data = await self.redis_client.get(key)
+            data = await self.client.get(key)
             return json.loads(data) if data else None
         except Exception:
             return None
 
     async def set(self, key: str, value: Any, expire: int = 3600):
         try:
-            await self.redis_client.set(key, json.dumps(value), ex=expire)
+            await self.client.set(key, json.dumps(value), ex=expire)
         except Exception:
             pass
 
-
-cache = RedisCacheManager()
-
+redis_config = RedisConfig()
 
 def cached(expire: int = 3600):
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             key = f"{func.__name__}:{str(args)}:{str(kwargs)}"
-
-            cached_result = await cache.get(key)
+            cached_result = await redis_config.get(key)
             if cached_result is not None:
                 return cached_result
-
             result = await func(*args, **kwargs)
-            await cache.set(key, result, expire)
+            await redis_config.set(key, result, expire)
             return result
-
         return wrapper
-
     return decorator
