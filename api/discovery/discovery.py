@@ -8,10 +8,11 @@ from pymongo import DESCENDING
 from utility.logger import logger
 from core.updatesingletoken import update_single_token
 from utility.updatealltokens import update_all_tokens
-
+from database.redis import cached
 router = APIRouter()
 
 @router.get("/tokens", response_model=List[Token])
+@cached(expire=1800)
 async def get_tokens(
         chain: Optional[str] = None,
         min_liquidity: Optional[float] = None,

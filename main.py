@@ -8,6 +8,7 @@ from datetime import datetime
 from database.database import db
 
 from database.database import init_web3_and_db, get_web3_config
+from database.redis import cached, cache
 from utility.logger import logger
 from utility.webhookManager import send_startup_webhook
 from api.discovery.discovery import router as discovery_router
@@ -25,15 +26,16 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up the application...")
 
     try:
-        # Initialize database first
+
+        await cache.initialize()
+        logger.info("Redis cache initialized successfully")
+
         await db.initialize()
         logger.info("Database initialized successfully")
 
-        # Initialize Web3 config
         web3_config = await init_web3_and_db()
         app.state.web3_config = web3_config
 
-        # Load wallet endpoints
         wallet_path = os.path.join(os.path.dirname(__file__), "api", "wallet")
         for filename in os.listdir(wallet_path):
             if filename.endswith(".py") and filename != "__init__.py":
@@ -43,7 +45,6 @@ async def lifespan(app: FastAPI):
                     app.include_router(getattr(module, "router"))
                     logger.info(f"Endpoint /api/{filename[:-3]} is now online")
 
-        # Load user endpoints
         userpath = os.path.join(os.path.dirname(__file__), "api", "users")
         for filename in os.listdir(userpath):
             if filename.endswith(".py") and filename != "__init__.py":
@@ -53,7 +54,6 @@ async def lifespan(app: FastAPI):
                     app.include_router(getattr(module, "router"))
                     logger.info(f"Auth endpoint loaded")
 
-        # Send startup webhook
         await send_startup_webhook(
             True,
             "Application started successfully.",
