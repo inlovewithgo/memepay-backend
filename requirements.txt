@@ -5,7 +5,6 @@ datetime==5.1
 importlib-metadata==6.8.0
 pydantic==2.2.1
 solders==0.14.1
-base64==1.2.1
 json5==0.9.14
 typing-extensions==4.8.0
 solana==0.30.0
