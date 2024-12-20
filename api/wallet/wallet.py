@@ -1,12 +1,15 @@
-from fastapi import FastAPI, HTTPException, Request , APIRouter
+from fastapi import FastAPI, HTTPException, Request, APIRouter
 from typing import Optional, List, Dict, Any
 import httpx
 from pydantic import BaseModel
 from decimal import Decimal
 import asyncio
 from collections import defaultdict
+from utility.logger import logger
+from database.redis import cached
+import os
 
-router = APIRouter()
+router = APIRouter(prefix="/api/wallet", tags=["wallet"])
 
 class TokenData(BaseModel):
     id: int
@@ -30,7 +33,6 @@ class TokenResponse(BaseModel):
     count: int
 
 def get_token_metadata(mint: str) -> Dict[str, str]:
-    """Get default token metadata based on known token addresses"""
     KNOWN_TOKENS = {
         "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
             "name": "USD Coin",
@@ -41,7 +43,7 @@ def get_token_metadata(mint: str) -> Dict[str, str]:
             "name": "USD Tether",
             "symbol": "USDT",
             "logoUrl": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.svg"
-        },   
+        },
     }
     return KNOWN_TOKENS.get(mint, {
         "name": f"Token {mint[:4]}...{mint[-4:]}",
@@ -50,7 +52,6 @@ def get_token_metadata(mint: str) -> Dict[str, str]:
     })
 
 async def fetch_token_accounts(wallet: str, rpc_url: str) -> Dict[str, Any]:
-    """Fetch token accounts from Solana RPC"""
     rpc_request = {
         "jsonrpc": "2.0",
         "id": 1,
@@ -65,7 +66,6 @@ async def fetch_token_accounts(wallet: str, rpc_url: str) -> Dict[str, Any]:
             }
         ]
     }
-    
     async with httpx.AsyncClient() as client:
         response = await client.post(
             rpc_url,
@@ -75,18 +75,14 @@ async def fetch_token_accounts(wallet: str, rpc_url: str) -> Dict[str, Any]:
         return response.json()
 
 async def fetch_token_market_data(token_addresses: List[str]) -> Dict[str, Any]:
-    """Fetch token market data from DexScreener"""
     if not token_addresses:
         return {"pairs": []}
-        
     addresses = ",".join(token_addresses)
     url = f"https://api.dexscreener.com/latest/dex/tokens/{addresses}"
-    
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
             data = response.json()
-            # Ensure we have the expected structure
             if isinstance(data, dict) and "pairs" in data:
                 return data
             else:
@@ -97,7 +93,6 @@ async def fetch_token_market_data(token_addresses: List[str]) -> Dict[str, Any]:
         return {"pairs": []}
 
 def format_balance(amount: str, decimals: int) -> str:
-    """Format balance with commas and proper decimal places"""
     try:
         raw_amount = Decimal(amount)
         factor = Decimal(10) ** decimals
@@ -107,21 +102,16 @@ def format_balance(amount: str, decimals: int) -> str:
         return "0"
 
 def process_token_data(token_accounts: List[Dict], market_data: Dict[str, Any]) -> List[Dict]:
-    """Process and combine token account data with market data"""
-    # First, consolidate token balances
     token_balances = {}
     for account in token_accounts:
         parsed_info = account["account"]["data"]["parsed"]["info"]
         raw_amount = parsed_info["tokenAmount"]["amount"]
-        
         if float(raw_amount) > 0:
             mint = parsed_info["mint"]
             decimals = parsed_info["tokenAmount"]["decimals"]
-            
             if mint in token_balances:
                 current_balance = Decimal(token_balances[mint]["raw_balance"])
                 raw_amount = str(Decimal(raw_amount) + current_balance)
-            
             token_balances[mint] = {
                 "balance": format_balance(raw_amount, decimals),
                 "raw_balance": raw_amount,
@@ -131,19 +121,15 @@ def process_token_data(token_accounts: List[Dict], market_data: Dict[str, Any]) 
                 "owner": parsed_info["owner"]
             }
 
-    # Create market data lookup
     market_lookup = {}
     for pair in market_data.get("pairs", []):
         try:
             if not isinstance(pair, dict) or "baseToken" not in pair:
                 continue
-                
             base_token = pair["baseToken"]
             if not isinstance(base_token, dict) or "address" not in base_token:
                 continue
-                
             mint = base_token["address"]
-            
             if mint not in market_lookup or market_lookup[mint]["marketCap"] < float(pair.get("marketCap", 0)):
                 market_lookup[mint] = {
                     "name": base_token.get("name", "").strip(),
@@ -156,13 +142,10 @@ def process_token_data(token_accounts: List[Dict], market_data: Dict[str, Any]) 
         except Exception as e:
             print(f"Error processing market pair: {e}")
 
-    # Combine data
     result = []
     for idx, (mint, balance_data) in enumerate(token_balances.items(), 1):
-        # Get market data if available, otherwise use defaults
         market_info = market_lookup.get(mint, None)
         if market_info is None:
-            # Use default metadata for unknown tokens
             metadata = get_token_metadata(mint)
             balance = balance_data["balance"]
             market_info = {
@@ -173,10 +156,10 @@ def process_token_data(token_accounts: List[Dict], market_data: Dict[str, Any]) 
                 "marketCap": 0,
                 "logoUrl": metadata["logoUrl"]
             }
-
+        
         balance = balance_data["balance"]
         balance_usd = float(balance.replace(",", "")) * market_info["price"]
-
+        
         result.append(TokenData(
             id=idx,
             name=market_info["name"],
@@ -193,10 +176,10 @@ def process_token_data(token_accounts: List[Dict], market_data: Dict[str, Any]) 
             owner=token_balances[mint]["owner"],
             decimals=token_balances[mint]["decimals"]
         ))
-
     return result
 
-@router.get("/wallet/tokens", response_model=TokenResponse)
+@router.get("/tokens", response_model=TokenResponse)
+@cached(expire=300) 
 async def get_tokens(
     request: Request,
     wallet: str,
@@ -206,36 +189,65 @@ async def get_tokens(
         raise HTTPException(status_code=400, detail="Wallet address is required")
     
     if not rpc_url:
-        rpc_url = "https://solana-mainnet.api.syndica.io/api-key/faKTzw51EinVZKmoyEVd7wbePKtmKhFYt4HEDuoxGAW4fkbEFUVrsL2MY1uRc9kXcQTZC8acLTQGb8dEufyX65LrzXd38S7NHS"
+        rpc_url = os.getenv("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
     
     try:
-        # Fetch token accounts
+        logger.info(f"Fetching token accounts for wallet: {wallet}")
         token_response = await fetch_token_accounts(wallet, rpc_url)
+        
+        if "error" in token_response:
+            logger.warning(f"No token accounts found for wallet: {wallet}")
+            return TokenResponse(
+                wallet=wallet,
+                tokens=[],
+                count=0
+            )
+            
+        if "result" not in token_response:
+            raise HTTPException(
+                status_code=500,
+                detail="Invalid response from RPC endpoint"
+            )
+            
         token_accounts = token_response["result"]["value"]
         
-        # Get unique mint addresses with positive balances
+        if not token_accounts:
+            return TokenResponse(
+                wallet=wallet,
+                tokens=[],
+                count=0
+            )
+            
         mint_addresses = []
         for account in token_accounts:
-            parsed_info = account["account"]["data"]["parsed"]["info"]
-            if float(parsed_info["tokenAmount"]["amount"]) > 0:
-                mint = parsed_info["mint"]
-                if mint not in mint_addresses:
-                    mint_addresses.append(mint)
+            try:
+                parsed_info = account["account"]["data"]["parsed"]["info"]
+                if float(parsed_info["tokenAmount"]["amount"]) > 0:
+                    mint = parsed_info["mint"]
+                    if mint not in mint_addresses:
+                        mint_addresses.append(mint)
+            except KeyError:
+                continue
         
-        # Fetch market data for all tokens
         market_data = await fetch_token_market_data(mint_addresses)
-        
-        # Process and combine token data
         tokens = process_token_data(token_accounts, market_data)
         
+        logger.info(f"Successfully fetched {len(tokens)} tokens for wallet: {wallet}")
         return TokenResponse(
             wallet=wallet,
             tokens=tokens,
             count=len(tokens)
         )
         
+    except httpx.RequestError as e:
+        logger.error(f"RPC connection error: {str(e)}")
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to connect to RPC endpoint"
+        )
     except Exception as error:
+        logger.error(f"Error processing token data: {str(error)}")
         raise HTTPException(
             status_code=500,
-            detail=f"Error fetching token data: {str(error)}"
+            detail=str(error)
         )
