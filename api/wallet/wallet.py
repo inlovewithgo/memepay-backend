@@ -196,7 +196,7 @@ def process_token_data(token_accounts: List[Dict], market_data: Dict[str, Any]) 
 
     return result
 
-@router.get("/api/tokens", response_model=TokenResponse)
+@router.get("/wallet/tokens", response_model=TokenResponse)
 async def get_tokens(
     request: Request,
     wallet: str,
