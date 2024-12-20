@@ -95,7 +95,7 @@ app.include_router(discovery_router, prefix="/api/discovery", tags=["discovery"]
 
 
 @app.get("/health", tags=["healthcheck"], status_code=status.HTTP_200_OK)
-@cached(expire=60)
+@cached(expire=30)
 async def health_check():
     return {
         "status": "healthy",

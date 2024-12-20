@@ -9,6 +9,7 @@ from utility.logger import logger
 from core.updatesingletoken import update_single_token
 from utility.updatealltokens import update_all_tokens
 from database.redis import cached
+
 router = APIRouter()
 
 @router.get("/tokens", response_model=List[Token])
