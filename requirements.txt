@@ -19,5 +19,4 @@ web3==6.11.0
 motor==3.4.0
 redis==5.0.0
 traceback2==1.4.0
-google-auth==3.0.1
 passlib==1.7.4
