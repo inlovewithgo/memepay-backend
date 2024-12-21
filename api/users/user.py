@@ -3,13 +3,12 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, OA
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from bson import ObjectId
 from google.oauth2 import id_token
 from google.auth.transport import requests
 import aiohttp
-
+from typing import Optional
 from database.database import get_database, Database, db
-from database.models import User, UserInDB, UserUpdate, TokenData
+from database.models import User, UserInDB, TokenData
 
 router = APIRouter(
     prefix="/api/auth",
@@ -24,60 +23,75 @@ google_oauth2_scheme = OAuth2AuthorizationCodeBearer(
     tokenUrl="https://oauth2.googleapis.com/token"
 )
 
+SECRET_KEY = "QevEHNs5u6NVl84Q36/d3rYBwg/5Re/f3Vapm+9Y6Ds="
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception:
+        return False
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials"
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if not username:
+            raise credentials_exception
+        user = await db.users.find_one({"username": username})
+        if not user:
+            raise credentials_exception
+        return UserInDB(**user)
+    except JWTError:
+        raise credentials_exception
+
 async def create_tokens(user_id: str, request: Request) -> TokenData:
     config = request.app.state.oauth_config
     access_token_expires = datetime.utcnow() + timedelta(minutes=config["access_token_expire_minutes"])
     refresh_token_expires = datetime.utcnow() + timedelta(days=7)
-
+    
     access_token = jwt.encode(
         {"sub": str(user_id), "exp": access_token_expires},
         config["secret_key"],
         algorithm=config["algorithm"]
     )
-
+    
     refresh_token = jwt.encode(
         {"sub": str(user_id), "exp": refresh_token_expires, "refresh": True},
         config["secret_key"],
         algorithm=config["algorithm"]
     )
-
+    
     token_data = TokenData(
         user_id=str(user_id),
         access_token=access_token,
         refresh_token=refresh_token,
         expires_at=access_token_expires
     )
-
     await db.tokens.insert_one(token_data.dict())
     return token_data
 
-async def get_current_user(request: Request, token: str = Depends(oauth2_scheme), db: Database = Depends(get_database)) -> UserInDB:
-    config = request.app.state.oauth_config
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid authentication credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, config["secret_key"], algorithms=[config["algorithm"]])
-        user_id = payload.get("sub")
-        if not user_id:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-
-    user = await db.users.find_one({"_id": ObjectId(user_id)})
-    if not user:
-        raise credentials_exception
-    return UserInDB(**user)
-
-# Traditional Registration and Login
 @router.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
-async def register_user(user: UserInDB, db: Database = Depends(get_database)):
+async def register_user(user_data: UserInDB, request: Request, db: Database = Depends(get_database)):
     existing_user = await db.users.find_one({
         "$or": [
-            {"email": user.email},
-            {"username": user.username}
+            {"email": user_data.email},
+            {"username": user_data.username}
         ]
     })
     if existing_user:
@@ -86,37 +100,72 @@ async def register_user(user: UserInDB, db: Database = Depends(get_database)):
             detail="Username or email already registered"
         )
 
-    user_dict = user.dict(exclude={"id"})
+    user_dict = user_data.model_dump(exclude={"id"})
     user_dict["password"] = pwd_context.hash(user_dict["password"])
     user_dict["created_at"] = datetime.utcnow()
+    user_dict["updated_at"] = datetime.utcnow()
     user_dict["auth_provider"] = "local"
 
-    result = await db.users.insert_one(user_dict)
-    created_user = await db.users.find_one({"_id": result.inserted_id})
-    return User(**created_user)
-
-@router.post("/login", response_model=TokenData)
-async def login(
-    request: Request,
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Database = Depends(get_database)
-):
-    user = await db.users.find_one({"username": form_data.username})
-    if not user or not pwd_context.verify(form_data.password, user["password"]):
+    try:
+        result = await db.users.insert_one(user_dict)
+        created_user = await db.users.find_one({"_id": result.inserted_id})
+        if created_user is None:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create user"
+            )
+        return User(**created_user)
+    except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
         )
 
-    tokens = await create_tokens(str(user["_id"]), request)
-    await db.users.update_one(
-        {"_id": user["_id"]},
-        {"$set": {"last_login": datetime.utcnow()}}
-    )
+@router.post("/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    try:
+        user = await db.users.find_one({"email": form_data.username})
+        if user is None:
+            user = await db.users.find_one({"username": form_data.username})
+        
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect username or password"
+            )
 
-    return tokens
+        if not verify_password(form_data.password, user["password"]):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect username or password"
+            )
 
-# Google OAuth Routes
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": str(user["_id"])},
+            expires_delta=access_token_expires
+        )
+
+        await db.users.update_one(
+            {"_id": user["_id"]},
+            {"$set": {"last_login": datetime.utcnow()}}
+        )
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user_id": str(user["_id"])
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+
+
+
+
 @router.get("/google/login")
 async def google_login(request: Request):
     config = request.app.state.oauth_config
@@ -180,8 +229,7 @@ async def google_callback(code: str, request: Request, db: Database = Depends(ge
                     detail="Invalid token"
                 )
 
-# Common Routes
-@router.get("/me", response_model=User)
+x@router.get("/me", response_model=User)
 async def get_user_profile(current_user: UserInDB = Depends(get_current_user)):
     return User(**current_user.dict())
 

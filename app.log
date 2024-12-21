@@ -1,0 +1,649 @@
+2024-12-21 16:06:23,689 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:06:24,305 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:06:24,309 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:06:24,312 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:06:24,314 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:08:49,874 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2024-12-21 16:09:42,847 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:09:43,416 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:09:43,419 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:09:43,421 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:09:43,422 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:10:08,537 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2024-12-21 16:11:13,372 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:11:13,998 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:11:14,001 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:11:14,005 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:11:14,007 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:12:22,469 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:12:23,378 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:12:23,379 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:12:23,382 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:12:23,383 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:12:51,968 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2024-12-21 16:15:45,832 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:15:48,086 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:15:48,087 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:15:48,088 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:15:48,088 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:17:34,424 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:17:35,071 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:17:35,072 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:17:35,075 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:17:35,076 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:20:17,530 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:20:20,714 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:20:20,715 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:20:20,715 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:20:20,715 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:23:45,357 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:23:46,348 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:23:46,350 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:23:46,351 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:23:46,352 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:27:03,880 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:27:04,863 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:27:04,866 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:27:04,868 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:27:04,868 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:32:04,870 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:34:05,630 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:34:06,677 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:34:06,678 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:34:06,678 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:34:06,679 - hypercorn.error - INFO - Running on http://0.0.0.0:9999 (CTRL + C to quit)
+2024-12-21 16:35:47,086 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:35:47,825 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:35:47,827 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:35:47,829 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:35:47,843 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-2' coro=<Lifespan.handle_lifespan() done, defined at /home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py:42> exception=LifespanFailureError('Lifespan failure in shutdown. \'Traceback (most recent call last):\n  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve\n    await worker_serve(\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve\n    sockets = config.create_sockets()\n              ^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets\n    insecure_sockets = self._create_sockets(self.bind)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets\n    sock.bind(binding)\nOSError: [Errno 98] Address already in use\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan\n    yield\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan\n    yield None  # old ASGI compatibility\n    ^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan\n    await receive()\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive\n    return await self.app_queue.get()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get\n    await getter\nasyncio.exceptions.CancelledError\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan\n    async with self.lifespan_context(app) as maybe_state:\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan\n    async with original_context(app) as maybe_original_state:\n               ^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan\n    await db.close()\n          ^^^^^^^^\nAttributeError: \'Database\' object has no attribute \'close\'\n\'')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 55, in handle_lifespan
+    await self.app(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/app_wrappers.py", line 34, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 152, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 48, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 724, in app
+    await self.lifespan(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 704, in lifespan
+    await send({"type": "lifespan.shutdown.failed", "message": exc_text})
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 122, in asgi_send
+    raise LifespanFailureError("shutdown", message.get("message", ""))
+hypercorn.utils.LifespanFailureError: Lifespan failure in shutdown. 'Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+'
+2024-12-21 16:37:57,241 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:37:57,760 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:37:57,761 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:37:57,762 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:37:57,766 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-2' coro=<Lifespan.handle_lifespan() done, defined at /home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py:42> exception=LifespanFailureError('Lifespan failure in shutdown. \'Traceback (most recent call last):\n  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve\n    await worker_serve(\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve\n    sockets = config.create_sockets()\n              ^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets\n    insecure_sockets = self._create_sockets(self.bind)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets\n    sock.bind(binding)\nOSError: [Errno 98] Address already in use\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan\n    yield\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan\n    yield None  # old ASGI compatibility\n    ^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan\n    await receive()\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive\n    return await self.app_queue.get()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get\n    await getter\nasyncio.exceptions.CancelledError\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan\n    async with self.lifespan_context(app) as maybe_state:\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan\n    async with original_context(app) as maybe_original_state:\n               ^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan\n    await db.close()\n          ^^^^^^^^\nAttributeError: \'Database\' object has no attribute \'close\'\n\'')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 55, in handle_lifespan
+    await self.app(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/app_wrappers.py", line 34, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 152, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 48, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 724, in app
+    await self.lifespan(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 704, in lifespan
+    await send({"type": "lifespan.shutdown.failed", "message": exc_text})
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 122, in asgi_send
+    raise LifespanFailureError("shutdown", message.get("message", ""))
+hypercorn.utils.LifespanFailureError: Lifespan failure in shutdown. 'Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+'
+2024-12-21 16:41:56,651 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:41:57,288 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:41:57,289 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:41:57,290 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:41:57,299 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-2' coro=<Lifespan.handle_lifespan() done, defined at /home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py:42> exception=LifespanFailureError('Lifespan failure in shutdown. \'Traceback (most recent call last):\n  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve\n    await worker_serve(\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve\n    sockets = config.create_sockets()\n              ^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets\n    insecure_sockets = self._create_sockets(self.bind)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets\n    sock.bind(binding)\nOSError: [Errno 98] Address already in use\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan\n    yield\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan\n    yield None  # old ASGI compatibility\n    ^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan\n    await receive()\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive\n    return await self.app_queue.get()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get\n    await getter\nasyncio.exceptions.CancelledError\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan\n    async with self.lifespan_context(app) as maybe_state:\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan\n    async with original_context(app) as maybe_original_state:\n               ^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan\n    await db.close()\n          ^^^^^^^^\nAttributeError: \'Database\' object has no attribute \'close\'\n\'')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 55, in handle_lifespan
+    await self.app(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/app_wrappers.py", line 34, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 152, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 48, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 724, in app
+    await self.lifespan(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 704, in lifespan
+    await send({"type": "lifespan.shutdown.failed", "message": exc_text})
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 122, in asgi_send
+    raise LifespanFailureError("shutdown", message.get("message", ""))
+hypercorn.utils.LifespanFailureError: Lifespan failure in shutdown. 'Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+'
+2024-12-21 16:44:06,060 - app_logger - INFO - Auth endpoint loaded
+2024-12-21 16:44:09,055 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1317076508002488330/rGWTWLU977Vxb9NRxQpDjJF1bvIdalcc1erNT5pxVwrSKxCZLTtSTTG3lV44Dl2tUqhI "HTTP/1.1 204 No Content"
+2024-12-21 16:44:09,055 - app_logger - INFO - Startup webhook sent successfully.
+2024-12-21 16:44:09,056 - app_logger - ERROR - Error in periodic update: 'NoneType' object has no attribute 'find'
+2024-12-21 16:44:09,058 - asyncio - ERROR - unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-2' coro=<Lifespan.handle_lifespan() done, defined at /home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py:42> exception=LifespanFailureError('Lifespan failure in shutdown. \'Traceback (most recent call last):\n  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve\n    await worker_serve(\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve\n    sockets = config.create_sockets()\n              ^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets\n    insecure_sockets = self._create_sockets(self.bind)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets\n    sock.bind(binding)\nOSError: [Errno 98] Address already in use\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan\n    yield\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan\n    yield None  # old ASGI compatibility\n    ^^^^^^^^^^\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan\n    await receive()\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive\n    return await self.app_queue.get()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get\n    await getter\nasyncio.exceptions.CancelledError\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan\n    async with self.lifespan_context(app) as maybe_state:\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan\n    async with original_context(app) as maybe_original_state:\n               ^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__\n    await self.gen.athrow(value)\n  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan\n    await db.close()\n          ^^^^^^^^\nAttributeError: \'Database\' object has no attribute \'close\'\n\'')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 55, in handle_lifespan
+    await self.app(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/app_wrappers.py", line 34, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 152, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 48, in __call__
+    await self.app(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 724, in app
+    await self.lifespan(scope, receive, send)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 704, in lifespan
+    await send({"type": "lifespan.shutdown.failed", "message": exc_text})
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 122, in asgi_send
+    raise LifespanFailureError("shutdown", message.get("message", ""))
+hypercorn.utils.LifespanFailureError: Lifespan failure in shutdown. 'Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/__init__.py", line 44, in serve
+    await worker_serve(
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/run.py", line 91, in worker_serve
+    sockets = config.create_sockets()
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 206, in create_sockets
+    insecure_sockets = self._create_sockets(self.bind)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/config.py", line 273, in _create_sockets
+    sock.bind(binding)
+OSError: [Errno 98] Address already in use
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 67, in lifespan
+    yield
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 136, in merged_lifespan
+    yield None  # old ASGI compatibility
+    ^^^^^^^^^^
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/hypercorn/asyncio/lifespan.py", line 110, in asgi_receive
+    return await self.app_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/starlette/routing.py", line 693, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/venv/lib/python3.12/site-packages/fastapi/routing.py", line 133, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/contextlib.py", line 231, in __aexit__
+    await self.gen.athrow(value)
+  File "/home/exril/Documents/codeas/memepay/memepay-backend/memepay-backend-rw/main.py", line 74, in lifespan
+    await db.close()
+          ^^^^^^^^
+AttributeError: 'Database' object has no attribute 'close'
+'

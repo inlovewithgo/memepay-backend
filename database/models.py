@@ -113,3 +113,16 @@ class TokenData(BaseModel):
     token_type: str = "bearer"
     expires_at: datetime
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class UserInDB(BaseModel):
+    id: Optional[str] = None
+    username: str
+    email: str
+    password: str
+    full_name: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    last_login: Optional[datetime] = None
+    is_active: bool = True
+    is_verified: bool = False

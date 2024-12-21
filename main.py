@@ -27,12 +27,15 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up the application...")
 
     try:
+        await db.initialize()
+        if not db.client:
+            raise Exception("Database client not initialized")
+        logger.info("Database initialized successfully")
 
         await redis_config.initialize()
         logger.info("Redis cache initialized successfully")
 
-        await db.initialize()
-        logger.info("Database initialized successfully")
+        app.state.db = db
 
         web3_config = await init_web3_and_db()
         app.state.web3_config = web3_config
@@ -64,10 +67,11 @@ async def lifespan(app: FastAPI):
         yield
 
     except Exception as e:
-        logger.error(f"Startup failed: {e}")
+        logger.error(f"Startup failed: {str(e)}")
         raise
     finally:
-        await db.close()
+        if db.client:
+            await db.close()
         await redis_config.close()
         logger.info("Application shutdown complete")
 
@@ -89,7 +93,9 @@ app.state.oauth_config = {
     "secret_key": SECRET_KEY,
     "algorithm": ALGORITHM,
     "access_token_expire_minutes": ACCESS_TOKEN_EXPIRE_MINUTES,
+    "db": db
 }
+
 
 app.include_router(discovery_router, prefix="/api/discovery", tags=["discovery"])
 

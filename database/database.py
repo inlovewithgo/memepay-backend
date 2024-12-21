@@ -4,6 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 from pymongo import ASCENDING
 from .redis import redis_config
+from fastapi import status
 
 class Database:
     def __init__(self):
@@ -12,6 +13,7 @@ class Database:
         self.db = None
         self.tokens = None
         self.pairs = None
+        self.users = None  # Add users collection
 
     async def initialize(self):
         try:
@@ -22,14 +24,21 @@ class Database:
             self.db = self.client["user_management"]
             self.tokens = self.db.tokens
             self.pairs = self.db.pairs
+            self.users = self.db.users  # Initialize users collection
+            
+            # Create indexes for users collection
+            await self.users.create_index([("email", ASCENDING)], unique=True)
+            await self.users.create_index([("username", ASCENDING)], unique=True)
+            
+            # Existing indexes
+            await self.tokens.create_index([("address", ASCENDING)], unique=True)
+            await self.tokens.create_index([("symbol", ASCENDING)])
+            await self.pairs.create_index([("address", ASCENDING)], unique=True)
+            
             await self.client.admin.command('ping')
             return self
         except Exception as e:
             raise Exception(f"Failed to connect to MongoDB: {str(e)}")
-
-    async def close(self):
-        if self.client:
-            self.client.close()
 
 db = Database()
 
@@ -58,15 +67,12 @@ async def init_web3_and_db():
         await web3_config.initialize()
         await redis_config.initialize()
 
-        await db.tokens.create_index([("address", ASCENDING)], unique=True)
-        await db.tokens.create_index([("symbol", ASCENDING)])
-        await db.pairs.create_index([("address", ASCENDING)], unique=True)
-
         return {
             "w3_bsc": web3_config.w3_bsc,
             "w3_eth": web3_config.w3_eth,
             "tokens_collection": db.tokens,
             "pairs_collection": db.pairs,
+            "users_collection": db.users,  # Add users collection
             "PANCAKESWAP_FACTORY": web3_config.PANCAKESWAP_FACTORY,
             "UNISWAP_FACTORY": web3_config.UNISWAP_FACTORY,
             "redis_client": redis_config.client
@@ -89,10 +95,16 @@ async def get_web3_config():
         await web3_config.initialize()
     return web3_config
 
-async def get_database():
+async def get_database() -> Database:
     if not db.client:
         await db.initialize()
+        if not db.client:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Database connection failed"
+            )
     return db
+
 
 async def get_redis():
     if not redis_config.initialized:
