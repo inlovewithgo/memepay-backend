@@ -92,3 +92,61 @@ async def get_tokens(
             status_code=500,
             detail=str(error)
         )
+@router.get("/sol")
+async def get_sol_balance(
+    request: Request,
+    wallet: str,
+    rpc_url: Optional[str] = None
+):
+    if not wallet:
+        raise HTTPException(status_code=400, detail="Wallet address is required")
+    
+    if not rpc_url:
+        rpc_url = os.getenv("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                rpc_url,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "getBalance",
+                    "params": [wallet]
+                },
+                headers={"Content-Type": "application/json"}
+            )
+            
+            data = response.json()
+            
+            if "error" in data:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"RPC error: {data['error']['message']}"
+                )
+            
+            if "result" not in data:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Invalid response from RPC endpoint"
+                )
+            
+            # Convert lamports to SOL (1 SOL = 1_000_000_000 lamports)
+            balance_in_lamports = data["result"]["value"]
+            balance_in_sol = balance_in_lamports / 1_000_000_000
+            
+            return {
+                "balance": str(balance_in_sol),
+                "raw_balance": balance_in_lamports
+            }
+            
+    except httpx.RequestError as e:
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to connect to RPC endpoint"
+        )
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )
