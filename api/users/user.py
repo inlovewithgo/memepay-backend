@@ -229,7 +229,7 @@ async def google_callback(code: str, request: Request, db: Database = Depends(ge
                     detail="Invalid token"
                 )
 
-x@router.get("/me", response_model=User)
+@router.get("/me", response_model=User)
 async def get_user_profile(current_user: UserInDB = Depends(get_current_user)):
     return User(**current_user.dict())
 

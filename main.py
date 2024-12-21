@@ -68,11 +68,6 @@ async def lifespan(app: FastAPI):
 
     except Exception as e:
         logger.error(f"Startup failed: {str(e)}")
-        raise
-    finally:
-        if db.client:
-            await db.close()
-        await redis_config.close()
         logger.info("Application shutdown complete")
 
 
