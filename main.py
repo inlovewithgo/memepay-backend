@@ -63,12 +63,18 @@ async def lifespan(app: FastAPI):
             "Application started successfully.",
             ["All endpoints are now online"]
         )
-
         yield
-
     except Exception as e:
         logger.error(f"Startup failed: {str(e)}")
-        logger.info("Application shutdown complete")
+        await send_startup_webhook(
+            False,
+            f"Application startup failed: {str(e)}",
+            [],
+        )
+        raise
+    finally:
+        logger.info("Shutting down the application...")
+
 
 
 app = FastAPI(lifespan=lifespan)

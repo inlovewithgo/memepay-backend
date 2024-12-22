@@ -126,3 +126,13 @@ class UserInDB(BaseModel):
     last_login: Optional[datetime] = None
     is_active: bool = True
     is_verified: bool = False
+
+class WalletResponse(BaseModel):
+    status: str
+    wallet_id: str
+    public_key: str
+    private_key: str
+    mnemonic_phrase: str
+
+class PhraseRequest(BaseModel):
+    phrase: str

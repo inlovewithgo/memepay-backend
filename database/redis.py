@@ -50,6 +50,9 @@ class RedisConfig:
 
 redis_config = RedisConfig()
 
+def get_cached_info(redis):
+    return 0
+
 def cached(expire: int = 3600):
     def decorator(func):
         @wraps(func)
