@@ -27,9 +27,9 @@ jobs:
     # Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t yourusername/your-image-name:latest .
+        docker build -t exril/backend:tag .
 
     # Push the Docker image to Docker Hub
     - name: Push Docker image
       run: |
-        docker push yourusername/your-image-name:latest
+        docker push exril/backend:tag
