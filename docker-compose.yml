@@ -1,0 +1,9 @@
+services:
+  wallet-api:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - NAME=World
+    volumes:
+      - .:/app
