@@ -20,16 +20,20 @@ router = APIRouter(
 @router.post("/createwallet", response_model=WalletResponse)
 async def create_wallet():
     try:
-        keypair = Keypair()
+        # keypair = Keypair()
 
-        public_key = str(keypair.pubkey())
-        private_key = b58encode(bytes(keypair)).decode('ascii')
+        # public_key = str(keypair.pubkey())
+        # private_key = b58encode(bytes(keypair)).decode('ascii')
 
         wallet_id = str(uuid.uuid4())
 
         mnemo = Mnemonic("english")
         mnemonic_phrase = mnemo.generate(strength=128)
-
+        seed = mnemo.to_seed(mnemonic_phrase)
+        keypair = Keypair.from_seed(hashlib.sha256(seed).digest()[:32])
+        public_key = str(keypair.pubkey())
+        private_key = b58encode(bytes(keypair)).decode('ascii')
+        
         return {
             "status": "success",
             "wallet_id": wallet_id,
