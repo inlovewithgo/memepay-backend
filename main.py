@@ -106,7 +106,7 @@ def main():
 
     logger.info("Running the application...")
     config = Config()
-    config.bind = ["0.0.0.0:9999"]
+    config.bind = ["0.0.0.0:80"]
     config.reload = True
 
     asyncio.run(serve(app, config))
