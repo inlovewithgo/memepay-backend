@@ -4,14 +4,9 @@ from pydantic import BaseModel
 import httpx
 import os
 
-router = APIRouter(prefix="/api/wallet", tags=["wallet"])
+from database.models import TokenData
 
-class TokenData(BaseModel):
-    pubkey: str
-    mint: str
-    owner: str
-    decimals: int
-    balance: str
+router = APIRouter(prefix="/api/wallet", tags=["wallet"])
 
 async def fetch_token_accounts(wallet: str, rpc_url: str):
     rpc_request = {

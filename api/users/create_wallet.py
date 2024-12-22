@@ -20,7 +20,6 @@ router = APIRouter(
 @router.post("/createwallet", response_model=WalletResponse)
 async def create_wallet():
     try:
-        client = Client("https://api.devnet.solana.com")
         keypair = Keypair()
 
         public_key = str(keypair.pubkey())

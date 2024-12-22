@@ -136,3 +136,10 @@ class WalletResponse(BaseModel):
 
 class PhraseRequest(BaseModel):
     phrase: str
+
+class TokenData(BaseModel):
+    pubkey: str
+    mint: str
+    owner: str
+    decimals: int
+    balance: str

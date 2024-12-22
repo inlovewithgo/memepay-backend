@@ -87,17 +87,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.state.oauth_config = {
-    "google_client_id": GOOGLE_CLIENT_ID,
-    "google_client_secret": GOOGLE_CLIENT_SECRET,
-    "google_redirect_uri": GOOGLE_REDIRECT_URI,
-    "secret_key": SECRET_KEY,
-    "algorithm": ALGORITHM,
-    "access_token_expire_minutes": ACCESS_TOKEN_EXPIRE_MINUTES,
-    "db": db
-}
-
-
 app.include_router(discovery_router, prefix="/api/discovery", tags=["discovery"])
 
 
