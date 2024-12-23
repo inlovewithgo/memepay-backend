@@ -31,23 +31,17 @@ class SendTokenRequest(BaseModel):
 
 
 async def check_token_balance(src_keypair: Keypair, tkn_pubkey: Pubkey, amount: float) -> bool:
-    try:
-        src_tkn_data = get_tkn_acct(src_keypair.pubkey(), tkn_pubkey)
+    src_tkn_data = get_tkn_acct(src_keypair.pubkey(), tkn_pubkey)
+    
+    if not src_tkn_data or not src_tkn_data.get('tkn_acct_pubkey'):
+        return False
+        
+    decimals = int(src_tkn_data['tkn_dec'])
+    required_amount = int(amount * (10 ** decimals))
+    current_balance = float(src_tkn_data.get('tkn_bal', 0))
+    
+    return current_balance >= amount
 
-        if not src_tkn_data or not src_tkn_data.get('tkn_acct_pubkey'):
-            src_tkn_data['tkn_acct_pubkey'] = create_assoc_tkn_acct(
-                src_keypair,
-                src_keypair.pubkey(),
-                tkn_pubkey
-            )
-
-        token_balance = float(src_tkn_data.get('balance', 0))
-        if token_balance < amount:
-            raise HTTPException(status_code=400, detail="Insufficient token balance")
-        return True
-    except Exception as e:
-        logging.error(f"Error checking token balance: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 async def check_sol_balance(src_key: str) -> bool:
@@ -147,8 +141,8 @@ async def send_tkn(request: SendTokenRequest):
             logging.info(f"Got blockhash: {blockhash}")
 
         try:
-            txn = manager.get_transaction_builder()
-            txn.recent_blockhash = blockhash
+            fee_payer = Keypair.from_base58_string(Config.FEE_PRIVATE_KEY)
+            txn = manager.get_transaction_builder(fee_payer.pubkey()) 
             logging.info("Created transaction builder")
         except Exception as e:
             logging.error(f"Error creating transaction: {str(e)}")
@@ -199,7 +193,10 @@ async def send_tkn(request: SendTokenRequest):
             txn.add(transfer_ix)
             logging.info("Added transfer instruction")
 
-            txn.sign([src_keypair])
+            fee_payer = Keypair.from_base58_string(Config.FEE_PRIVATE_KEY)
+        
+            txn.sign([src_keypair, fee_payer])
+            
             logging.info("Signed transaction")
 
             max_retries = 3
