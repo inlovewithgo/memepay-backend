@@ -1,10 +1,10 @@
 import requests, base64
-from solders.keypair import Keypair
-from solders.pubkey import Pubkey
+from solders.keypair import Keypair # type: ignore
+from solders.pubkey import Pubkey # type: ignore
 from solana.rpc.api import Client
 import time, json
-from solders.transaction import Transaction
-from solders.transaction import VersionedTransaction
+from solders.transaction import Transaction # type: ignore
+from solders.transaction import VersionedTransaction # type: ignore
 from solders import message
 from solana.rpc.types import TxOpts
 from solana.rpc.commitment import Processed

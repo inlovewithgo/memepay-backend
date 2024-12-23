@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
-from solders.keypair import Keypair
-from solders.pubkey import Pubkey as Pubkey
+from solders.keypair import Keypair # type: ignore
+from solders.pubkey import Pubkey as Pubkey # type: ignore
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.instructions import transfer_checked, TransferCheckedParams
 from utility.dataconfig import Config
@@ -12,7 +12,7 @@ import base64
 import json
 import time
 import traceback
-from solders.transaction import VersionedTransaction
+from solders.transaction import VersionedTransaction # type: ignore
 from solders import message
 
 from utility.logger import logger

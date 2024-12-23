@@ -1,9 +1,9 @@
 import json
 from typing import Dict, Any
 from solana.rpc.api import Client
-from solders.transaction import Transaction
-from solders.pubkey import Pubkey as Pubkey
-from solders.keypair import Keypair
+from solders.transaction import Transaction # type: ignore
+from solders.pubkey import Pubkey as Pubkey # type: ignore
+from solders.keypair import Keypair # type: ignore
 from solana.rpc.types import TxOpts
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.client import Token
@@ -11,7 +11,7 @@ from spl.token.instructions import create_associated_token_account, get_associat
     TransferParams
 from utility.dataconfig import Config
 from solana.rpc.types import TokenAccountOpts, TxOpts
-from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price
+from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price # type: ignore
 
 class SolanaTransactionManager:
     def __init__(self, rpc_url: str):

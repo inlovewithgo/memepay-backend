@@ -1,14 +1,14 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from solana.rpc.api import Client
-from solders.keypair import Keypair
-from base58 import b58encode
+from solders.keypair import Keypair # type: ignore
+from base58 import b58encode # type: ignore
 from typing import Dict
 from database.models import WalletResponse, PhraseRequest
 import uuid
-from mnemonic import Mnemonic
+from mnemonic import Mnemonic # type: ignore
 
-from bip32utils import BIP32Key
+from bip32utils import BIP32Key # type: ignore
 import hashlib
 
 router = APIRouter(
