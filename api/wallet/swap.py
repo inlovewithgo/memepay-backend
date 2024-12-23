@@ -31,7 +31,7 @@ class SwapRequest(BaseModel):
     amount: float
 
 
-@router.post("/wallet/swap")
+@router.post("/swap")
 async def perform_swap(request: SwapRequest):
     try:
         manager = SolanaTransactionManager(Config.RPC_URL)
