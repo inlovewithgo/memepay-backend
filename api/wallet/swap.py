@@ -17,7 +17,11 @@ from solders import message
 
 from utility.logger import logger
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/wallet",
+    tags=["Authentication"],
+    responses={404: {"description": "Not found"}},
+)
 
 
 class SwapRequest(BaseModel):

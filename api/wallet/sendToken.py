@@ -11,7 +11,11 @@ from spl.token.instructions import (
 from utility.dataconfig import Config
 from ..main import create_assoc_tkn_acct, SolanaTransactionManager, get_tkn_acct
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/wallet",
+    tags=["Authentication"],
+    responses={404: {"description": "Not found"}},
+)
 
 class SendTokenRequest(BaseModel):
     src_key: str

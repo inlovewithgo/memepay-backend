@@ -2,7 +2,11 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from ..main import send_sol
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/wallet",
+    tags=["Authentication"],
+    responses={404: {"description": "Not found"}},
+)
 
 class TransferRequest(BaseModel):
     sender_private_key: str
