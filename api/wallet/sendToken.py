@@ -11,6 +11,7 @@ import aiohttp
 import json
 from datetime import datetime
 import pytz
+import time
 
 from utility.dataconfig import Config
 from ..main import create_assoc_tkn_acct, SolanaTransactionManager, get_tkn_acct
@@ -91,7 +92,7 @@ async def send_tkn(request: SendTokenRequest):
             dest_tkn_data['tkn_acct_pubkey'] if dest_tkn_data['tkn_acct_pubkey']
             else create_assoc_tkn_acct(src_keypair, dest_pubkey, tkn_pubkey)
         )
-
+        time.sleep(2)
         send_amt_lamps = int(request.tkn_amt * 10 ** int(src_tkn_data['tkn_dec']))
         txn.add(transfer_checked(
             TransferCheckedParams(
