@@ -14,6 +14,8 @@ import time
 import traceback
 from solders.transaction import VersionedTransaction # type: ignore
 from solders import message
+from datetime import datetime
+from pytz import timezone
 
 from utility.logger import logger
 
@@ -30,6 +32,52 @@ class SwapRequest(BaseModel):
     to_token: str
     amount: float
     slippage : int
+    
+async def send_discord_webhook(transaction_data: dict):
+    """Send transaction notification to Discord webhook"""
+    embed = {
+        "title": "New Swap Transaction",
+        "color": 3066993,  # Green color
+        "fields": [
+            {
+                "name": "Transaction ID",
+                "value": f"[{transaction_data['transaction_id']}]({transaction_data['transaction_url']})",
+                "inline": False
+            },
+            {
+                "name": "Status",
+                "value": transaction_data['status'].capitalize(),
+                "inline": True
+            },
+            {
+                "name": "Time",
+                "value": datetime.now(timezone('Asia/Kolkata')).strftime("%Y-%m-%d %H:%M:%S IST"),
+                "inline": True
+            }
+        ],
+        "footer": {
+            "text": "Solana Swap"
+        }
+    }
+
+    webhook_data = {
+        "embeds": [embed]
+    }
+
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                "https://discord.com/api/webhooks/1321072338070016001/p4yzkSp9PzZ7W6v9SPexwsittaOhSpigqj7TUiu2fUiefbIDTCcHzmA-JXng3kbDzdRP",
+                json=webhook_data,
+                timeout=5
+            ) as response:
+                if response.status != 204:
+                    logger.error(f"Failed to send Discord webhook: {await response.text()}")
+                else:
+                    logger.info("Discord webhook sent successfully")
+    except Exception as e:
+        logger.error(f"Error sending Discord webhook: {str(e)}")
+
 
 @router.post("/swap")
 async def perform_swap(request: SwapRequest):
@@ -181,11 +229,14 @@ async def perform_swap(request: SwapRequest):
                 transaction_id = json.loads(result.to_json())['result']
                 
                 logger.info(f"Transaction completed successfully. ID: {transaction_id}")
-                return {
+                transaction_data = {
                     "status": "success",
                     "transaction_id": transaction_id,
                     "transaction_url": f"https://solscan.io/tx/{transaction_id}"
                 }
+                await send_discord_webhook(transaction_data)
+
+                return transaction_data
 
         except aiohttp.ClientError as e:
             logger.error(f"Swap API network error: {str(e)}")
