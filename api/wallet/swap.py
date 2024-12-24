@@ -1,38 +1,28 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
-from solders.keypair import Keypair
-from solders.pubkey import Pubkey
+from solders.keypair import Keypair # type: ignore
+from solders.pubkey import Pubkey as Pubkey # type: ignore
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.instructions import transfer_checked, TransferCheckedParams
 from utility.dataconfig import Config
 from utility.create_acc import JupiterReferralAPI
 from ..main import create_assoc_tkn_acct, SolanaTransactionManager, get_tkn_acct
-from spl.token._layouts import MINT_LAYOUT
-from solana.rpc.api import Client
 import aiohttp
 import base64
 import json
 import time
 import traceback
-from solders.transaction import VersionedTransaction
+from solders.transaction import VersionedTransaction # type: ignore
 from solders import message
-from utility.logger import logger
 
-def get_token_decimals(token_address):
-    try:
-        http_client = Client("https://api.mainnet-beta.solana.com")
-        addr = Pubkey.from_string(token_address)
-        info = http_client.get_account_info(addr)
-        return MINT_LAYOUT.parse(info.value.data).decimals
-    except Exception as e:
-        logger.error(f"Error fetching token decimals: {str(e)}")
-        return None
+from utility.logger import logger
 
 router = APIRouter(
     prefix="/api/wallet",
     tags=["Authentication"],
     responses={404: {"description": "Not found"}},
 )
+
 
 class SwapRequest(BaseModel):
     private_key: str
@@ -102,6 +92,7 @@ async def perform_swap(request: SwapRequest):
         if str(to_token_pubkey) != "So11111111111111111111111111111111111111112":
             try:
                 to_token_account = get_tkn_acct(keypair.pubkey(), to_token_pubkey)
+
                 if not to_token_account['tkn_acct_pubkey']:
                     logger.info("Creating new associated token account")
                     create_assoc_tkn_acct(keypair, keypair.pubkey(), to_token_pubkey)
@@ -181,9 +172,12 @@ async def perform_swap(request: SwapRequest):
 
                 # Transaction processing
                 raw_transaction = VersionedTransaction.from_bytes(base64.b64decode(swap_data['swapTransaction']))
+
                 signature = keypair.sign_message(message.to_bytes_versioned(raw_transaction.message))
                 signed_txn = VersionedTransaction.populate(raw_transaction.message, [signature])
+
                 result = manager.send_swap(signed_txn)
+
                 transaction_id = json.loads(result.to_json())['result']
                 
                 logger.info(f"Transaction completed successfully. ID: {transaction_id}")
@@ -211,17 +205,3 @@ async def perform_swap(request: SwapRequest):
             del keypair
         if 'private_key' in data:
             del data['private_key']
-
-async def get_existing_mints():
-    try:
-        logger.info("Reading existing mints")
-        with open('existing_mints.txt', 'r') as f:
-            return set(line.strip() for line in f if line.strip())
-    except FileNotFoundError:
-        logger.warning("existing_mints.txt not found")
-        return set()
-
-async def add_mint_to_file(mint: str):
-    logger.info(f"Adding new mint to file: {mint}")
-    with open('existing_mints.txt', 'a') as f:
-        f.write(f"\n{mint}\n")
