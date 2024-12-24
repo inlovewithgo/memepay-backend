@@ -2,8 +2,8 @@ fastapi
 httpx
 uvicorn
 hypercorn
-solana
 solders
+solana==0.34.0
 base58
 python-jose
 google
@@ -19,3 +19,4 @@ redis
 pymongo
 pydantic[email]
 motor
+pytz
