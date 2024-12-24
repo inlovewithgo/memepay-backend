@@ -102,7 +102,7 @@ async def perform_swap(request: SwapRequest):
 
         # Quote fetching with detailed error handling
         try:
-            decimals = get_token_decimals(data['from_token'])
+            decimals = manager.get_spl_token_decimals(data['from_token'])
             if decimals is None:
                 raise ValueError("Failed to fetch token decimals")
 
