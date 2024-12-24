@@ -93,10 +93,8 @@ async def send_tkn(request: SendTokenRequest):
             dest_tkn_data['tkn_acct_pubkey'] if dest_tkn_data['tkn_acct_pubkey']
             else create_assoc_tkn_acct(src_keypair, dest_pubkey, tkn_pubkey)
         )
-        time.sleep(3)
         
-        client = Client(Config.RPC_URL)
-        dest_tkn_pubkey = client.get_token_accounts_by_owner(dest_pubkey, TokenAccountOpts(tkn_pubkey)).value[0].pubkey
+        time.sleep(15)
         
         txn = manager.get_transaction_builder(src_keypair.pubkey())
         send_amt_lamps = int(request.tkn_amt * 10 ** int(src_tkn_data['tkn_dec']))
@@ -105,7 +103,7 @@ async def send_tkn(request: SendTokenRequest):
                 program_id=TOKEN_PROGRAM_ID,
                 source=src_tkn_data['tkn_acct_pubkey'],
                 mint=tkn_pubkey,
-                dest=Pubkey.from_string(str(dest_tkn_pubkey)),
+                dest=Pubkey.from_string(str(dest_tkn_acct_pubkey)),
                 owner=src_keypair.pubkey(),
                 amount=send_amt_lamps,
                 decimals=src_tkn_data['tkn_dec'],

@@ -28,16 +28,28 @@ async def fetch_token_accounts(wallet: str, rpc_url: str):
         )
         return response.json()
 
-def process_token_data(token_accounts: List[dict]) -> List[TokenData]:
-    """Process raw token account data into a list of TokenData objects."""
+def process_token_data(token_accounts: List[dict], mint_filter: Optional[str] = None) -> List[TokenData]:
+    """
+    Process raw token account data into a list of TokenData objects.
+    
+    Args:
+        token_accounts: List of token account data from RPC
+        mint_filter: Optional mint address to filter by
+    """
     tokens = []
     for account in token_accounts:
         parsed_info = account["account"]["data"]["parsed"]["info"]
         raw_amount = parsed_info["tokenAmount"]["amount"]
+        mint_address = parsed_info["mint"]
+        
+        # Skip if mint_filter is provided and doesn't match
+        if mint_filter and mint_address != mint_filter:
+            continue
+            
         if float(raw_amount) > 0:
             tokens.append(TokenData(
                 pubkey=account["pubkey"],
-                mint=parsed_info["mint"],
+                mint=mint_address,
                 owner=parsed_info["owner"],
                 decimals=parsed_info["tokenAmount"]["decimals"],
                 balance=parsed_info["tokenAmount"]["uiAmountString"]
@@ -48,9 +60,17 @@ def process_token_data(token_accounts: List[dict]) -> List[TokenData]:
 async def get_tokens(
     request: Request,
     wallet: str,
+    mints: Optional[str] = None,
     rpc_url: Optional[str] = None
 ):
-    """Retrieve token balances for a given wallet."""
+    """
+    Retrieve token balances for a given wallet.
+    
+    Args:
+        wallet: The wallet address to query
+        mints: Optional specific token mint address to filter by
+        rpc_url: Optional RPC URL to use instead of the default
+    """
     if not wallet:
         raise HTTPException(status_code=400, detail="Wallet address is required")
 
@@ -69,8 +89,9 @@ async def get_tokens(
             )
 
         token_accounts = token_response["result"].get("value", [])
-
-        return process_token_data(token_accounts)
+        
+        # Process with mint filter if provided
+        return process_token_data(token_accounts, mints)
 
     except httpx.RequestError:
         raise HTTPException(
