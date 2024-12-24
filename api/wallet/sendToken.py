@@ -1,16 +1,19 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from solders.keypair import Keypair # type: ignore
+from solana.rpc.api import Client
 from solders.pubkey import Pubkey as Pubkey # type: ignore
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.instructions import (
     transfer_checked,
     TransferCheckedParams,
+    get_associated_token_address
 )
 import aiohttp
 import json
 from datetime import datetime
 import pytz
+from solana.rpc.types import TokenAccountOpts
 import time
 
 from utility.dataconfig import Config
@@ -78,48 +81,46 @@ async def send_tkn(request: SendTokenRequest):
         src_keypair = Keypair.from_base58_string(request.src_key)
         tkn_pubkey = Pubkey.from_string(request.tkn_addr)
         dest_pubkey = Pubkey.from_string(request.dest_addr)
-
-        RPC_URL = Config.RPC_URL
-        manager = SolanaTransactionManager(RPC_URL)
-        txn = manager.get_transaction_builder(src_keypair.pubkey())
-
+        manager = SolanaTransactionManager(Config.RPC_URL)
+        
         src_tkn_data = get_tkn_acct(src_keypair.pubkey(), tkn_pubkey)
         if not src_tkn_data['tkn_acct_pubkey']:
             raise HTTPException(status_code=400, detail="Source account does not have that token")
 
         dest_tkn_data = get_tkn_acct(dest_pubkey, tkn_pubkey)
+        
         dest_tkn_acct_pubkey = (
             dest_tkn_data['tkn_acct_pubkey'] if dest_tkn_data['tkn_acct_pubkey']
             else create_assoc_tkn_acct(src_keypair, dest_pubkey, tkn_pubkey)
         )
-        time.sleep(2)
+        time.sleep(3)
+        
+        client = Client(Config.RPC_URL)
+        dest_tkn_pubkey = client.get_token_accounts_by_owner(dest_pubkey, TokenAccountOpts(tkn_pubkey)).value[0].pubkey
+        
+        txn = manager.get_transaction_builder(src_keypair.pubkey())
         send_amt_lamps = int(request.tkn_amt * 10 ** int(src_tkn_data['tkn_dec']))
         txn.add(transfer_checked(
             TransferCheckedParams(
                 program_id=TOKEN_PROGRAM_ID,
                 source=src_tkn_data['tkn_acct_pubkey'],
                 mint=tkn_pubkey,
-                dest=dest_tkn_acct_pubkey,
+                dest=Pubkey.from_string(str(dest_tkn_pubkey)),
                 owner=src_keypair.pubkey(),
                 amount=send_amt_lamps,
                 decimals=src_tkn_data['tkn_dec'],
             )
         ))
         txn.sign(src_keypair)
-
         txn_hash = manager.send_transaction(txn)
-        
         transaction_details = {
             "transaction_hash": txn_hash,
             "amount": request.tkn_amt,
             "token_address": request.tkn_addr,
             "destination": request.dest_addr
         }
-        
         await send_discord_webhook(transaction_details)
-        
         return {"status": "success", "transaction_hash": txn_hash}
-
     except KeyError as ke:
         raise HTTPException(status_code=400, detail=f"Missing key: {str(ke)}")
     except Exception as e:

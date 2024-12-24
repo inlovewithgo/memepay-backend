@@ -1,21 +1,32 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from solders.keypair import Keypair # type: ignore
-from solders.pubkey import Pubkey as Pubkey # type: ignore
+from solders.keypair import Keypair
+from solders.pubkey import Pubkey
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.instructions import transfer_checked, TransferCheckedParams
 from utility.dataconfig import Config
 from utility.create_acc import JupiterReferralAPI
 from ..main import create_assoc_tkn_acct, SolanaTransactionManager, get_tkn_acct
+from spl.token._layouts import MINT_LAYOUT
+from solana.rpc.api import Client
 import aiohttp
 import base64
 import json
 import time
 import traceback
-from solders.transaction import VersionedTransaction # type: ignore
+from solders.transaction import VersionedTransaction
 from solders import message
-
 from utility.logger import logger
+
+def get_token_decimals(token_address):
+    try:
+        http_client = Client("https://api.mainnet-beta.solana.com")
+        addr = Pubkey.from_string(token_address)
+        info = http_client.get_account_info(addr)
+        return MINT_LAYOUT.parse(info.value.data).decimals
+    except Exception as e:
+        logger.error(f"Error fetching token decimals: {str(e)}")
+        return None
 
 router = APIRouter(
     prefix="/api/wallet",
@@ -23,22 +34,25 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
 class SwapRequest(BaseModel):
     private_key: str
     from_token: str
     to_token: str
     amount: float
-
+    slippage : int
 
 @router.post("/swap")
 async def perform_swap(request: SwapRequest):
+    # Clear sensitive data in finally block
+    keypair = None
+    data = request.dict()
+    
     try:
         manager = SolanaTransactionManager(Config.RPC_URL)
         logger.info("Starting swap operation")
-        data = request.dict()
-        required_fields = ['private_key', 'from_token', 'to_token', 'amount']
 
+        # Validate request data
+        required_fields = ['private_key', 'from_token', 'to_token', 'amount', 'slippage']
         if not isinstance(data, dict):
             logger.error("Invalid request format received")
             raise HTTPException(status_code=400, detail="Invalid request format")
@@ -48,187 +62,166 @@ async def perform_swap(request: SwapRequest):
             logger.error(f"Missing required fields in request: {missing_fields}")
             raise HTTPException(status_code=400, detail=f"Missing required fields: {', '.join(missing_fields)}")
 
+        # Amount validation with detailed error
         try:
             amount = float(data['amount'])
             if amount <= 0:
-                logger.error(f"Invalid amount received: {amount}")
-                raise HTTPException(status_code=400, detail="Amount must be positive")
-        except ValueError:
-            logger.error("Invalid amount format in request")
-            print("idk bruh")
-            raise HTTPException(status_code=400, detail="Invalid amount format")
+                raise ValueError("Amount must be positive")
+        except ValueError as e:
+            logger.error(f"Amount validation failed: {str(e)}")
+            raise HTTPException(status_code=400, detail=str(e))
 
-        # Private key validation with constant-time comparison
-        if not isinstance(data['private_key'], str):
-            logger.error("Invalid private key format: not a string")
-            raise HTTPException(status_code=400, detail="Private key must be a string")
-
+        # Slippage validation with detailed error
         try:
-            logger.info("Validating keypair")
+            slippage = float(data['slippage'])
+            if slippage <= 0:
+                raise ValueError("Slippage must be positive")
+            if slippage > 100:
+                raise ValueError("Slippage cannot exceed 100%")
+        except ValueError as e:
+            logger.error(f"Slippage validation failed: {str(e)}")
+            raise HTTPException(status_code=400, detail=str(e))
+
+        # Keypair validation with detailed error
+        try:
             keypair = Keypair.from_base58_string(data['private_key'])
-            data['private_key'] = None
-            logger.info("Keypair validation successful")
+            data['private_key'] = None  # Clear sensitive data immediately
         except Exception as e:
-            logger.error(f"Invalid private key format: {str(e)}")
+            logger.error(f"Keypair validation failed: {str(e)}")
             raise HTTPException(status_code=400, detail="Invalid private key format")
 
+        # Token address validation
         try:
-            logger.info("Validating token addresses")
             from_token_pubkey = Pubkey.from_string(data['from_token'])
             to_token_pubkey = Pubkey.from_string(data['to_token'])
-            logger.info("Token address validation successful")
         except Exception as e:
-            logger.error(f"Invalid token address format: {str(e)}")
-            raise HTTPException(status_code=400, detail="Invalid token address format")
+            logger.error(f"Token address validation failed: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Invalid token address: {str(e)}")
 
-        # Validate and create token accounts
-        try:
-            logger.info("Setting up token accounts")
-            if str(to_token_pubkey) != "So11111111111111111111111111111111111111112":
+        # Token account setup
+        if str(to_token_pubkey) != "So11111111111111111111111111111111111111112":
+            try:
                 to_token_account = get_tkn_acct(keypair.pubkey(), to_token_pubkey)
-
                 if not to_token_account['tkn_acct_pubkey']:
                     logger.info("Creating new associated token account")
                     create_assoc_tkn_acct(keypair, keypair.pubkey(), to_token_pubkey)
-        except Exception as e:
-            logger.error(f"Token account creation failed: {str(e)}")
-            raise HTTPException(status_code=500, detail="Failed to setup token account")
+            except Exception as e:
+                logger.error(f"Token account setup failed: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Token account setup failed: {str(e)}")
 
-        async def get_existing_mints():
-            try:
-                logger.info("Reading existing mints")
-                with open('existing_mints.txt', 'r') as f:
-                    return set(line.strip() for line in f if line.strip())
-            except FileNotFoundError:
-                logger.warning("existing_mints.txt not found")
-                return set()
-
-        async def add_mint_to_file(mint: str):
-            logger.info(f"Adding new mint to file: {mint}")
-            with open('existing_mints.txt', 'a') as f:
-                f.write(f"\n{mint}\n")
-
+        # Quote fetching with detailed error handling
         try:
-            logger.info("Setting up referral accounts")
-            api = JupiterReferralAPI()
-            existing_mints = await get_existing_mints()
-            sendkey = Keypair.from_base58_string(Config.FEE_PRIVATE_KEY)
+            decimals = get_token_decimals(data['from_token'])
+            if decimals is None:
+                raise ValueError("Failed to fetch token decimals")
 
-            if str(from_token_pubkey) not in existing_mints:
-                logger.info(f"Creating referral for from_token: {str(from_token_pubkey)}")
-                from_referral = api.create_token_account(
-                    referral_pubkey=Config.FEE_KEY,
-                    mint=str(from_token_pubkey),
-                    fee_payer=Config.FEE_RECIPIENT
-                )
-                api.send_tx(txn=from_referral, keypair=sendkey)
-                await add_mint_to_file(str(from_token_pubkey))
-
-            if str(to_token_pubkey) not in existing_mints:
-                logger.info(f"Creating referral for to_token: {str(to_token_pubkey)}")
-                to_referral = api.create_token_account(
-                    referral_pubkey=Config.FEE_KEY,
-                    mint=str(to_token_pubkey),
-                    fee_payer=Config.FEE_RECIPIENT
-                )
-                api.send_tx(txn=to_referral, keypair=sendkey)
-                await add_mint_to_file(str(to_token_pubkey))
-
-        except Exception as e:
-            logger.error(f"Referral setup failed: {str(e)}")
-            raise HTTPException(status_code=500, detail="Failed to setup referral accounts")
-
-        time.sleep(2)
-
-        try:
-            logger.info("Fetching quote")
-            quote_url = 'https://quote-api.jup.ag/v6/quote'
+            # Convert slippage to basis points (bps)
+            # Example: 0.5% slippage = 50 basis points
+            slippage_bps = int(float(data['slippage']) * 100)  # Convert percentage to basis points
+            
+            # Format amount based on token decimals - ensure it's an integer string
+            amount_in_smallest_unit = str(int(float(data['amount']) * 10 ** decimals))
+            
             quote_params = {
                 'inputMint': data['from_token'],
                 'outputMint': data['to_token'],
-                'amount': str(
-                    int(float(data['amount']) * 10 ** int(manager.get_spl_token_decimals(data['from_token'])))),
-                'slippageBps': '100',
-                'platformFeeBps': '20'
+                'amount': amount_in_smallest_unit,
+                'slippageBps': str(slippage_bps)  # Must be an integer string like "50" for 0.5%
             }
+            
+            logger.debug(f"Quote request parameters: {quote_params}")  # Add debug logging
 
+            # Build and log the full URL for debugging
+            query_string = '&'.join([f"{k}={v}" for k, v in quote_params.items()])
+            full_url = f'https://quote-api.jup.ag/v6/quote?{query_string}'
+            logger.debug(f"Full quote request URL: {full_url}")
+            
             async with aiohttp.ClientSession() as session:
-                try:
-                    async with session.get(quote_url, params=quote_params, timeout=10) as response:
-                        if response.status != 200:
-                            logger.error(f"Quote API returned status {response.status}")
-                            raise HTTPException(status_code=500, detail="Failed to get quote")
-                        quote_response = await response.json()
-                        logger.info("Quote fetched successfully")
-                except Exception as e:
-                    logger.error(f"Quote API call failed: {str(e)}")
-                    raise HTTPException(status_code=500, detail="Failed to fetch quote")
+                async with session.get('https://quote-api.jup.ag/v6/quote', 
+                                     params=quote_params, 
+                                     timeout=10) as response:
+                    if response.status != 200:
+                        error_body = await response.text()
+                        logger.error(f"Quote API error: Status {response.status}, Body: {error_body}")
+                        raise HTTPException(
+                            status_code=response.status,
+                            detail=f"Jupiter quote API error: {error_body}"
+                        )
+                    quote_response = await response.json()
+                    logger.info("Quote fetched successfully")
 
-            try:
-                logger.info("Calculating referral fee account")
-                seeds = [
-                    b"referral_ata",
-                    bytes(Pubkey.from_string("3cnbobTC5P1oBinqZsDkSpX2AJX8qLy68RLYgexSisrA")),
-                    bytes(to_token_pubkey)
-                ]
-                referral_program_id = Pubkey.from_string("REFER4ZgmyYx9c6He5XfaTMiGfdLwRnkV4RPp9t9iF3")
-                fee_account, _ = Pubkey.find_program_address(seeds, referral_program_id)
-                logger.info("Fee account calculated successfully")
-            except Exception as e:
-                logger.error(f"Fee account calculation failed: {str(e)}")
-                raise HTTPException(status_code=500, detail="Failed to calculate fee account")
+        except aiohttp.ClientError as e:
+            logger.error(f"Quote API network error: {str(e)}")
+            raise HTTPException(status_code=503, detail="Jupiter API is currently unavailable")
+        except Exception as e:
+            logger.error(f"Quote fetching failed: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Failed to fetch quote: {str(e)}")
 
-            logger.info("Initiating swap")
-            swap_url = 'https://quote-api.jup.ag/v6/swap'
+        # Swap execution
+        try:
             swap_payload = {
                 'userPublicKey': str(keypair.pubkey()),
                 'quoteResponse': quote_response,
                 'wrapAndUnwrapSol': True,
-                'prioritizationFeeLamports': 500000,
-                'feeAccount': str(fee_account),
+                'prioritizationFeeLamports': 500000
             }
 
             async with aiohttp.ClientSession() as session:
-                try:
-                    async with session.post(swap_url, json=swap_payload, timeout=10) as response:
-                        if response.status != 200:
-                            logger.error(f"Swap API returned status {response.status}")
-                            raise HTTPException(status_code=500, detail="Failed to create swap transaction")
-                        swap_data = await response.json()
-                        logger.info("Swap transaction created successfully")
-                except Exception as e:
-                    logger.error(f"Swap API call failed: {str(e)}")
-                    raise HTTPException(status_code=500, detail="Failed to create swap")
+                async with session.post('https://quote-api.jup.ag/v6/swap',
+                                      json=swap_payload,
+                                      timeout=10) as response:
+                    if response.status != 200:
+                        error_body = await response.text()
+                        logger.error(f"Swap API error: Status {response.status}, Body: {error_body}")
+                        raise HTTPException(
+                            status_code=response.status,
+                            detail=f"Jupiter swap API error: {error_body}"
+                        )
+                    swap_data = await response.json()
 
-            try:
-                logger.info("Processing transaction")
+                # Transaction processing
                 raw_transaction = VersionedTransaction.from_bytes(base64.b64decode(swap_data['swapTransaction']))
-
                 signature = keypair.sign_message(message.to_bytes_versioned(raw_transaction.message))
                 signed_txn = VersionedTransaction.populate(raw_transaction.message, [signature])
-
                 result = manager.send_swap(signed_txn)
-
                 transaction_id = json.loads(result.to_json())['result']
+                
                 logger.info(f"Transaction completed successfully. ID: {transaction_id}")
+                return {
+                    "status": "success",
+                    "transaction_id": transaction_id,
+                    "transaction_url": f"https://solscan.io/tx/{transaction_id}"
+                }
 
-                return {"status": "success", "transaction_id": transaction_id,
-                        "transaction_url": f"https://solscan.io/tx/{transaction_id}"}
-            except Exception as e:
-                logger.error(f"Transaction signing/submission failed: {str(e)}")
-                raise HTTPException(status_code=500, detail="Failed to process transaction")
-
+        except aiohttp.ClientError as e:
+            logger.error(f"Swap API network error: {str(e)}")
+            raise HTTPException(status_code=503, detail="Jupiter API is currently unavailable")
         except Exception as e:
-            logger.error(f"Unexpected error in swap process: {str(e)}")
-            raise HTTPException(status_code=500, detail="Internal server error")
+            logger.error(f"Swap execution failed: {str(e)}\n{traceback.format_exc()}")
+            raise HTTPException(status_code=500, detail=f"Swap execution failed: {str(e)}")
 
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions without modification
     except Exception as e:
-        logger.error(f"Swap failed: {str(e)}\n{traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
+        logger.error(f"Unexpected error: {str(e)}\n{traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
     finally:
-        logger.info("Cleaning up sensitive data")
-        if 'keypair' in locals():
+        # Clean up sensitive data
+        if keypair:
             del keypair
         if 'private_key' in data:
             del data['private_key']
+
+async def get_existing_mints():
+    try:
+        logger.info("Reading existing mints")
+        with open('existing_mints.txt', 'r') as f:
+            return set(line.strip() for line in f if line.strip())
+    except FileNotFoundError:
+        logger.warning("existing_mints.txt not found")
+        return set()
+
+async def add_mint_to_file(mint: str):
+    logger.info(f"Adding new mint to file: {mint}")
+    with open('existing_mints.txt', 'a') as f:
+        f.write(f"\n{mint}\n")

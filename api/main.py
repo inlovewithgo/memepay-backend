@@ -8,6 +8,7 @@ from solana.rpc.types import TxOpts
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.client import Token
 from solders.system_program import transfer, TransferParams
+import time
 from spl.token.instructions import (
     get_associated_token_address,
     transfer_checked,
@@ -44,7 +45,7 @@ class SolanaTransactionManager:
            logger.error(f"Error adding compute budget: {str(e)}")
            raise
 
-   def send_transaction(self, transaction: Transaction) -> str:
+   def  send_transaction(self, transaction: Transaction) -> str:
        try:
            serialized_txn = transaction.serialize()
            resp = self.client.send_raw_transaction(
@@ -73,7 +74,7 @@ class SolanaTransactionManager:
 
    def get_spl_token_decimals(self, token_address: str) -> int:
        try:
-           token_pubkey = Pubkey(token_address)
+           token_pubkey = Pubkey.from_string(token_address)
            supply_response = self.client.get_token_supply(token_pubkey)
            if supply_response.value:
                logger.info(f"Retrieved decimals for token {token_address}")
@@ -108,9 +109,9 @@ def send_sol(src_key: str, dest_addr: str, amt_sol: float) -> str:
                 from_pubkey   = src_keypair.pubkey(),
                 to_pubkey     = dest_pubkey,
                 lamports      = send_amt_lamps
+                )
             )
-        )
-    )   
+        )   
         txn.sign(src_keypair)
 
         return manager.send_transaction(txn)
@@ -120,20 +121,15 @@ def send_sol(src_key: str, dest_addr: str, amt_sol: float) -> str:
 
     
 def create_assoc_tkn_acct(payer: Keypair, owner: Pubkey, mint: Pubkey) -> Pubkey:
-   try:
-       manager = SolanaTransactionManager(Config.RPC_URL)
-       txn = manager.get_transaction_builder(payer.pubkey())
-       create_txn = create_associated_token_account(payer=payer.pubkey(), owner=owner, mint=mint)
-       txn.add(create_txn)
-       manager.add_compute_budget(txn)
-       txn.sign(payer)
-
-       manager.send_transaction(txn)
-       assoc_addr = get_associated_token_address(owner, mint)
-       return assoc_addr
-   except Exception as e:
-       logger.error(f"Failed to create associated token account: {str(e)}")
-       raise
+    manager = SolanaTransactionManager(Config.RPC_URL)
+    txn = manager.get_transaction_builder(payer.pubkey())
+    create_txn = create_associated_token_account(payer=payer.pubkey(), owner=owner, mint=mint)
+    txn.add(create_txn)
+    manager.add_compute_budget(txn)
+    txn.sign(payer)
+    manager.send_transaction(txn)
+    print(get_associated_token_address(owner,mint))
+    return get_associated_token_address(owner, mint)
 
 
 def get_tkn_acct(wallet_addr: Pubkey, tkn_addr: Pubkey) -> Dict[str, Any]:
