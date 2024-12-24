@@ -1,148 +1,165 @@
 import json
 from typing import Dict, Any
 from solana.rpc.api import Client
-from solders.message import MessageV0
-from solders.transaction import Transaction # type: ignore
-from solders.pubkey import Pubkey as Pubkey # type: ignore
-from solders.keypair import Keypair # type: ignore
+from solana.transaction import Transaction 
+from solders.pubkey import Pubkey
+from solders.keypair import Keypair
 from solana.rpc.types import TxOpts
 from spl.token.constants import TOKEN_PROGRAM_ID
 from spl.token.client import Token
-from spl.token.instructions import create_associated_token_account, get_associated_token_address, transfer, \
-    TransferParams
+from solders.system_program import transfer, TransferParams
+from spl.token.instructions import (
+    get_associated_token_address,
+    transfer_checked,
+    TransferCheckedParams,
+    create_associated_token_account,
+)
 from utility.dataconfig import Config
 from solana.rpc.types import TokenAccountOpts, TxOpts
 from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price
-from solders.transaction import VersionedTransaction
-from solders.system_program import TransferParams, transfer
-from solders.message import Message
+from utility.logger import logging
 
+logger = logging.getLogger("solana_transactions")
 
 class SolanaTransactionManager:
-    def __init__(self, rpc_url: str):
-        self.client = Client(rpc_url, commitment="confirmed", timeout=30)
-        self.config = Config()
+   def __init__(self, rpc_url: str):
+       self.client = Client(rpc_url, commitment="confirmed", timeout=30)
+       self.config = Config()
 
-    def send_transaction(self, transaction: VersionedTransaction) -> str:
-        try:
-            serialized_txn = bytes(transaction)
-            resp = self.client.send_raw_transaction(
-                serialized_txn,
-                opts=TxOpts(skip_confirmation=True, preflight_commitment="confirmed")
-            )
-            return json.loads(resp.to_json())['result']
-        except Exception as e:
-            raise ValueError(f"Failed to send transaction: {str(e)}")
+   def get_transaction_builder(self, fee_payer: Pubkey) -> Transaction:
+       try:
+           blockhash = self.client.get_latest_blockhash().value.blockhash
+           return Transaction(fee_payer=fee_payer, recent_blockhash=blockhash)
+       except Exception as e:
+           logger.error(f"Error getting transaction builder: {str(e)}")
+           raise
 
-    def get_transaction_builder(self, fee_payer: Pubkey) -> MessageV0:
-        blockhash = self.client.get_latest_blockhash().value.blockhash
-        return MessageV0.try_compile(
-            payer=fee_payer,
-            instructions=[
-                set_compute_unit_limit(Config.COMPUTE_LIMIT),
-                set_compute_unit_price(Config.COMPUTE_PRICE)
-            ],
-            address_lookup_table_accounts=[],
-            recent_blockhash=blockhash
-        )
+   def add_compute_budget(self, transaction: Transaction, price: int = Config.COMPUTE_PRICE,
+                          limit: int = Config.COMPUTE_LIMIT):
+       try:
+           transaction.add(set_compute_unit_price(price))
+           transaction.add(set_compute_unit_limit(limit))
+           print(f"Added compute budget - price: {price}, limit: {limit}")
+       except Exception as e:
+           logger.error(f"Error adding compute budget: {str(e)}")
+           raise
 
+   def send_transaction(self, transaction: Transaction) -> str:
+       try:
+           serialized_txn = transaction.serialize()
+           resp = self.client.send_raw_transaction(
+               serialized_txn,
+               opts=TxOpts(skip_confirmation=True, preflight_commitment="confirmed")
+           )
+           result = json.loads(resp.to_json())['result']
+           logger.info(f"Transaction sent successfully: {result}")
+           return result
+       except Exception as e:
+           logger.error(f"Failed to send transaction: {str(e)}")
+           raise
 
+   def send_swap(self, transaction: Transaction) -> str:
+       try:
+           serialized_txn = bytes(transaction)
+           resp = self.client.send_raw_transaction(
+               serialized_txn,
+               opts=TxOpts(skip_confirmation=True, preflight_commitment="processed")
+           )
+           logger.info(f"Swap transaction sent successfully")
+           return resp
+       except Exception as e:
+           logger.error(f"Failed to send swap transaction: {str(e)}")
+           raise
 
-    def send_swap(self, transaction: Transaction) -> str:
-        serialized_txn = bytes(transaction)
-        resp = self.client.send_raw_transaction(
-            serialized_txn,
-            opts=TxOpts(skip_confirmation=True, preflight_commitment="processed")
-        )
-        return resp
-
-    def get_spl_token_decimals(self, token_address: str) -> int:
-        try:
-            token_pubkey = Pubkey(token_address)
-            supply_response = self.client.get_token_supply(token_pubkey)
-            if supply_response.value:
-                return supply_response.value.decimals
-            return None
-        except Exception as e:
-            print(f"Error fetching token decimals: {str(e)}")
-            return None
+   def get_spl_token_decimals(self, token_address: str) -> int:
+       try:
+           token_pubkey = Pubkey(token_address)
+           supply_response = self.client.get_token_supply(token_pubkey)
+           if supply_response.value:
+               logger.info(f"Retrieved decimals for token {token_address}")
+               return supply_response.value.decimals
+           logger.warning(f"No supply response for token {token_address}")
+           return None
+       except Exception as e:
+           logger.error(f"Error fetching token decimals: {str(e)}")
+           return None
 
 def send_sol(src_key: str, dest_addr: str, amt_sol: float) -> str:
     try:
         manager = SolanaTransactionManager(Config.RPC_URL)
-        src_keypair = Keypair.from_base58_string(src_key)
-        dest_pubkey = Pubkey.from_string(dest_addr)
+        try:
+            src_keypair = Keypair.from_base58_string(src_key)
+        except Exception as e:
+            logger.error(f"Failed to create keypair: {str(e)}")
+            raise
+
+        try:
+            dest_pubkey = Pubkey.from_string(dest_addr)
+        except Exception as e:
+            logger.error(f"Failed to create destination pubkey: {str(e)}")
+            raise
+
         send_amt_lamps = int(amt_sol * Config.LAMPORTS_PER_SOL)
 
-        message = Message.try_compile(
-            payer=src_keypair.pubkey(),
-            instructions=[
-                set_compute_unit_price(Config.COMPUTE_PRICE),
-                set_compute_unit_limit(Config.COMPUTE_LIMIT),
-                transfer(
-                    TransferParams(
-                        from_pubkey=src_keypair.pubkey(),
-                        to_pubkey=dest_pubkey,
-                        lamports=send_amt_lamps
-                    )
-                )
-            ],
-            address_lookup_table_accounts=[],
-            recent_blockhash=manager.client.get_latest_blockhash().value.blockhash
+        txn = manager.get_transaction_builder(src_keypair.pubkey())
+        txn.add(
+        transfer(
+            TransferParams(
+                from_pubkey   = src_keypair.pubkey(),
+                to_pubkey     = dest_pubkey,
+                lamports      = send_amt_lamps
+            )
         )
-        
-        transaction = VersionedTransaction(message, [src_keypair])
-        return manager.send_transaction(transaction)
+    )   
+        txn.sign(src_keypair)
+
+        return manager.send_transaction(txn)
     except Exception as e:
-        raise ValueError(f"Transaction failed: {str(e)}")
+        logger.error(f"Failed to send SOL: {str(e)}")
+        raise
 
     
 def create_assoc_tkn_acct(payer: Keypair, owner: Pubkey, mint: Pubkey) -> Pubkey:
-    manager = SolanaTransactionManager(Config.RPC_URL)
-    
-    create_ix = create_associated_token_account(
-        payer=payer.pubkey(), 
-        owner=owner, 
-        mint=mint
-    )
-    
-    # Get blockhash
-    blockhash = manager.client.get_latest_blockhash().value.blockhash
-    
-    # Create message
-    message = Message.new_with_blockhash(
-        [create_ix],
-        payer.pubkey(),
-        blockhash
-    )
-    
-    # Create and sign transaction
-    transaction = Transaction.new_unsigned(message)
-    transaction.sign([payer], blockhash)  # Add blockhash to sign method
-    
-    manager.send_transaction(transaction)
-    return get_associated_token_address(owner, mint)
+   try:
+       manager = SolanaTransactionManager(Config.RPC_URL)
+       txn = manager.get_transaction_builder(payer.pubkey())
+       create_txn = create_associated_token_account(payer=payer.pubkey(), owner=owner, mint=mint)
+       txn.add(create_txn)
+       manager.add_compute_budget(txn)
+       txn.sign(payer)
 
+       manager.send_transaction(txn)
+       assoc_addr = get_associated_token_address(owner, mint)
+       return assoc_addr
+   except Exception as e:
+       logger.error(f"Failed to create associated token account: {str(e)}")
+       raise
 
 
 def get_tkn_acct(wallet_addr: Pubkey, tkn_addr: Pubkey) -> Dict[str, Any]:
-    client = Client(Config.RPC_URL)
-    try:
-        tkn_acct_data = client.get_token_accounts_by_owner(
-            wallet_addr, 
-            TokenAccountOpts(tkn_addr)
-        )
+   client = Client(Config.RPC_URL)
+   try:
+       tkn_acct_data = client.get_token_accounts_by_owner(wallet_addr, TokenAccountOpts(tkn_addr))
 
-        if not tkn_acct_data.value:
-            return {'tkn_acct_pubkey': None, 'tkn_bal': 0, 'tkn_dec': 0}
+       if not tkn_acct_data.value:
+           logger.warning(f"No token account found for wallet: {wallet_addr}")
+           return {'tkn_acct_pubkey': None, 'tkn_bal': 0, 'tkn_dec': 0}
 
-        tkn_acct_pubkey = tkn_acct_data.value[0].pubkey
-        balance_info = client.get_token_account_balance(tkn_acct_pubkey)
+       tkn_acct_pubkey = tkn_acct_data.value[0].pubkey
+       balance_info = Token(
+           conn=client,
+           pubkey=tkn_addr,
+           program_id=TOKEN_PROGRAM_ID,
+           payer=client
+       ).get_balance(tkn_acct_pubkey)
 
-        return {
-            'tkn_acct_pubkey': tkn_acct_pubkey,
-            'tkn_bal': balance_info.value.ui_amount,
-            'tkn_dec': balance_info.value.decimals
-        }
-    except Exception:
-        return {'tkn_acct_pubkey': None, 'tkn_bal': 0, 'tkn_dec': 0}
+       result = {
+           'tkn_acct_pubkey': tkn_acct_pubkey,
+           'tkn_bal': balance_info.value.ui_amount,
+           'tkn_dec': balance_info.value.decimals
+       }
+       logger.info(f"Retrieved token account info: {result}")
+       return result
+   except Exception as e:
+       logger.error(f"Failed to get token account: {str(e)}")
+       return {'tkn_acct_pubkey': None, 'tkn_bal': 0, 'tkn_dec': 0}
