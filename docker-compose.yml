@@ -2,7 +2,7 @@ services:
   wallet-api:
     build: .
     ports:
-      - "80:80"
+      - "9999:9999"
     environment:
       - NAME=World
     volumes:
