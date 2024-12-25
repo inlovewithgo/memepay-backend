@@ -61,13 +61,19 @@ async def verify_phrase(request: PhraseRequest):
                 "message": "Invalid solana phrase"
             }
         try:
+            wallet_id = str(uuid.uuid4())
             seed = mnemo.to_seed(request.phrase)
             keypair = Keypair.from_seed(hashlib.sha256(seed).digest()[:32])
+            public_key = str(keypair.pubkey())
+            private_key = b58encode(bytes(keypair)).decode('ascii')
 
             return {
                 "status": "success",
                 "valid": True,
-                "public_key": str(keypair.pubkey())
+                "wallet_id": wallet_id,
+                "public_key": public_key,
+                "private_key": private_key,
+                "mnemonic_phrase": request.phrase
             }
 
         except Exception as e:
