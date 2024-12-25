@@ -10,12 +10,17 @@ from mnemonic import Mnemonic # type: ignore
 
 from bip32utils import BIP32Key # type: ignore
 import hashlib
+from pydantic import BaseModel
 
 router = APIRouter(
     prefix="/api/auth",
     tags=["Authentication"],
     responses={404: {"description": "Not found"}},
 )
+
+class PrivateKeyRequest(BaseModel):
+    private_key: str
+
 
 @router.post("/createwallet", response_model=WalletResponse)
 async def create_wallet():
@@ -81,6 +86,39 @@ async def verify_phrase(request: PhraseRequest):
                 "status": "error",
                 "valid": False,
                 "message": "Invalid Solana wallet phrase"
+            }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+
+@router.post("/verifyprivatekey")
+async def verify_private_key(request: PrivateKeyRequest):
+    try:
+        try:
+            # Decode the base58 private key to bytes
+            from base58 import b58decode
+            private_key_bytes = b58decode(request.private_key)
+            keypair = Keypair.from_bytes(private_key_bytes)
+            
+            wallet_id = str(uuid.uuid4())
+            public_key = str(keypair.pubkey())
+            
+            return {
+                "status": "success",
+                "valid": True,
+                "wallet_id": wallet_id,
+                "public_key": public_key,
+                "private_key": request.private_key
+            }
+
+        except Exception as e:
+            return {
+                "status": "error",
+                "valid": False,
+                "message": "Invalid Solana private key"
             }
 
     except Exception as e:
