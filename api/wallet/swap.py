@@ -12,13 +12,133 @@ import base64
 import json
 import time
 import traceback
+from enum import Enum
+from fastapi import HTTPException
 from solders.transaction import VersionedTransaction # type: ignore
 from solders import message
 from datetime import datetime
+import re
 from pytz import timezone
 
 from utility.logger import logger
 
+class SolanaTransactionError(str, Enum):
+    INSUFFICIENT_LAMPORTS = "Insufficient SOL balance for transaction fees"
+    TRANSFER_FAILED = "Transfer failed due to insufficient lamports"
+    INSTRUCTION_ERROR = "Error processing transaction instruction"
+    SIMULATION_FAILED = "Transaction simulation failed"
+    INVALID_INSTRUCTION = "Invalid transaction instruction"
+    COMPUTE_BUDGET_EXCEEDED = "Compute budget exceeded"
+    TOKEN_ACCOUNT_SETUP_FAILED = "Token account setup failed"
+
+def parse_simulation_error(error_logs: list) -> tuple[str, dict]:
+    error_details = {
+        "compute_units_consumed": None,
+        "required_lamports": None,
+        "available_lamports": None
+    }
+    
+    for log in error_logs:
+        if "Transfer: insufficient lamports" in log:
+            parts = log.split("insufficient lamports")[1].split(",")
+            if len(parts) >= 2:
+                available = parts[0].strip()
+                needed = parts[1].split("need")[1].strip()
+                error_details["available_lamports"] = int(available)
+                error_details["required_lamports"] = int(needed)
+                return SolanaTransactionError.TRANSFER_FAILED, error_details
+        elif "consumed" in log and "compute units" in log:
+            units = log.split("consumed")[1].split("of")[0].strip()
+            error_details["compute_units_consumed"] = int(units)
+            return SolanaTransactionError.SIMULATION_FAILED, error_details
+
+def handle_transaction_error(e: Exception) -> HTTPException:
+    error_message = str(e)
+    
+    if "Transaction simulation failed" in error_message:
+        try:
+            error_data = e.args[0]
+            if "insufficient funds for rent" in error_message.lower():
+                return HTTPException(
+                    status_code=400,
+                    detail={
+                        "code": "INSUFFICIENT_RENT",
+                        "message": "Account has insufficient SOL to maintain minimum required balance (rent). Add more SOL to your wallet to cover rent requirement.",
+                        "minimum_required": "0.0028 SOL"  # Minimum for token accounts
+                    }
+                )
+            elif hasattr(error_data, 'data') and hasattr(error_data.data, 'logs'):
+                error_type, details = parse_simulation_error(error_data.data.logs)
+                if error_type == SolanaTransactionError.TRANSFER_FAILED:
+                    return HTTPException(
+                        status_code=400,
+                        detail={
+                            "code": "INSUFFICIENT_FUNDS",
+                            "message": "Insufficient funds for transaction",
+                            "available": details["available_lamports"],
+                            "required": details["required_lamports"]
+                        }
+                    )
+        except Exception:
+            pass
+
+    error_mapping = {
+        "insufficient lamports": {
+            "code": "INSUFFICIENT_BALANCE",
+            "message": "Insufficient SOL balance for transaction fees"
+        },
+        "custom program error: 0x1": {
+            "code": "INSTRUCTION_ERROR",
+            "message": "Failed to process transaction instruction"
+        },
+        "compute budget exceeded": {
+            "code": "COMPUTE_BUDGET_EXCEEDED",
+            "message": "Transaction exceeded compute budget"
+        }
+    }
+
+    for error_pattern, error_info in error_mapping.items():
+        if error_pattern in error_message.lower():
+            return HTTPException(
+                status_code=400,
+                detail=error_info
+            )
+
+    return HTTPException(
+        status_code=500,
+        detail={
+            "code": "TRANSACTION_FAILED",
+            "message": error_message
+        }
+    )
+
+async def handle_token_account_setup(keypair, to_token_pubkey):
+    try:
+        to_token_account = get_tkn_acct(keypair.pubkey(), to_token_pubkey)
+        if not to_token_account['tkn_acct_pubkey']:
+            logger.info("Creating new associated token account")
+            create_assoc_tkn_acct(keypair, keypair.pubkey(), to_token_pubkey)
+    except Exception as e:
+        logger.error(f"Token account setup failed: {str(e)}")
+        error_data = e.args[0] if e.args else None
+        
+        if hasattr(error_data, 'data') and hasattr(error_data.data, 'logs'):
+            error_type, details = parse_simulation_error(error_data.data.logs)
+            if error_type == SolanaTransactionError.TRANSFER_FAILED:
+                raise HTTPException(
+                    status_code=400,
+                    detail={
+                        "error": SolanaTransactionError.TOKEN_ACCOUNT_SETUP_FAILED.value,
+                        "available": details["available_lamports"],
+                        "required": details["required_lamports"]
+                    }
+                )
+        
+        raise HTTPException(
+            status_code=500,
+            detail={"error": SolanaTransactionError.TOKEN_ACCOUNT_SETUP_FAILED.value}
+        )
+    
 router = APIRouter(
     prefix="/api/wallet",
     tags=["Authentication"],
@@ -81,7 +201,6 @@ async def send_discord_webhook(transaction_data: dict):
 
 @router.post("/swap")
 async def perform_swap(request: SwapRequest):
-    # Clear sensitive data in finally block
     keypair = None
     data = request.dict()
     
@@ -123,7 +242,7 @@ async def perform_swap(request: SwapRequest):
         # Keypair validation with detailed error
         try:
             keypair = Keypair.from_base58_string(data['private_key'])
-            data['private_key'] = None  # Clear sensitive data immediately
+            data['private_key'] = None
         except Exception as e:
             logger.error(f"Keypair validation failed: {str(e)}")
             raise HTTPException(status_code=400, detail="Invalid private key format")
@@ -138,15 +257,7 @@ async def perform_swap(request: SwapRequest):
 
         # Token account setup
         if str(to_token_pubkey) != "So11111111111111111111111111111111111111112":
-            try:
-                to_token_account = get_tkn_acct(keypair.pubkey(), to_token_pubkey)
-
-                if not to_token_account['tkn_acct_pubkey']:
-                    logger.info("Creating new associated token account")
-                    create_assoc_tkn_acct(keypair, keypair.pubkey(), to_token_pubkey)
-            except Exception as e:
-                logger.error(f"Token account setup failed: {str(e)}")
-                raise HTTPException(status_code=500, detail=f"Token account setup failed: {str(e)}")
+            await handle_token_account_setup(keypair, to_token_pubkey)
 
         # Quote fetching with detailed error handling
         try:
@@ -154,34 +265,20 @@ async def perform_swap(request: SwapRequest):
             if decimals is None:
                 raise ValueError("Failed to fetch token decimals")
 
-            # Convert slippage to basis points (bps)
-            # Example: 0.5% slippage = 50 basis points
-            slippage_bps = int(float(data['slippage']) * 100)  # Convert percentage to basis points
-            
-            # Format amount based on token decimals - ensure it's an integer string
+            slippage_bps = int(float(data['slippage']) * 100)
             amount_in_smallest_unit = str(int(float(data['amount']) * 10 ** decimals))
-            
+
             quote_params = {
                 'inputMint': data['from_token'],
                 'outputMint': data['to_token'],
                 'amount': amount_in_smallest_unit,
-                'slippageBps': str(slippage_bps)  # Must be an integer string like "50" for 0.5%
+                'slippageBps': str(slippage_bps)
             }
-            
-            logger.debug(f"Quote request parameters: {quote_params}")  # Add debug logging
 
-            # Build and log the full URL for debugging
-            query_string = '&'.join([f"{k}={v}" for k, v in quote_params.items()])
-            full_url = f'https://quote-api.jup.ag/v6/quote?{query_string}'
-            logger.debug(f"Full quote request URL: {full_url}")
-            
             async with aiohttp.ClientSession() as session:
-                async with session.get('https://quote-api.jup.ag/v6/quote', 
-                                     params=quote_params, 
-                                     timeout=10) as response:
+                async with session.get('https://quote-api.jup.ag/v6/quote', params=quote_params, timeout=10) as response:
                     if response.status != 200:
                         error_body = await response.text()
-                        logger.error(f"Quote API error: Status {response.status}, Body: {error_body}")
                         raise HTTPException(
                             status_code=response.status,
                             detail=f"Jupiter quote API error: {error_body}"
@@ -206,52 +303,44 @@ async def perform_swap(request: SwapRequest):
             }
 
             async with aiohttp.ClientSession() as session:
-                async with session.post('https://quote-api.jup.ag/v6/swap',
-                                      json=swap_payload,
-                                      timeout=10) as response:
+                async with session.post('https://quote-api.jup.ag/v6/swap', json=swap_payload, timeout=10) as response:
                     if response.status != 200:
                         error_body = await response.text()
-                        logger.error(f"Swap API error: Status {response.status}, Body: {error_body}")
                         raise HTTPException(
                             status_code=response.status,
                             detail=f"Jupiter swap API error: {error_body}"
                         )
                     swap_data = await response.json()
 
-                # Transaction processing
-                raw_transaction = VersionedTransaction.from_bytes(base64.b64decode(swap_data['swapTransaction']))
-
-                signature = keypair.sign_message(message.to_bytes_versioned(raw_transaction.message))
-                signed_txn = VersionedTransaction.populate(raw_transaction.message, [signature])
-
-                result = manager.send_swap(signed_txn)
-
-                transaction_id = json.loads(result.to_json())['result']
-                
-                logger.info(f"Transaction completed successfully. ID: {transaction_id}")
-                transaction_data = {
-                    "status": "success",
-                    "transaction_id": transaction_id,
-                    "transaction_url": f"https://solscan.io/tx/{transaction_id}"
-                }
-                await send_discord_webhook(transaction_data)
-
-                return transaction_data
+            raw_transaction = VersionedTransaction.from_bytes(base64.b64decode(swap_data['swapTransaction']))
+            signature = keypair.sign_message(message.to_bytes_versioned(raw_transaction.message))
+            signed_txn = VersionedTransaction.populate(raw_transaction.message, [signature])
+            
+            result = manager.send_swap(signed_txn)
+            transaction_id = json.loads(result.to_json())['result']
+            
+            transaction_data = {
+                "status": "success",
+                "transaction_id": transaction_id,
+                "transaction_url": f"https://solscan.io/tx/{transaction_id}"
+            }
+            
+            await send_discord_webhook(transaction_data)
+            return transaction_data
 
         except aiohttp.ClientError as e:
             logger.error(f"Swap API network error: {str(e)}")
             raise HTTPException(status_code=503, detail="Jupiter API is currently unavailable")
         except Exception as e:
             logger.error(f"Swap execution failed: {str(e)}\n{traceback.format_exc()}")
-            raise HTTPException(status_code=500, detail=f"Swap execution failed: {str(e)}")
+            raise handle_transaction_error(e)
 
     except HTTPException:
-        raise  # Re-raise HTTP exceptions without modification
+        raise
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}\n{traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise handle_transaction_error(e)
     finally:
-        # Clean up sensitive data
         if keypair:
             del keypair
         if 'private_key' in data:
