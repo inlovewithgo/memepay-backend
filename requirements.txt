@@ -13,6 +13,7 @@ bip32utils
 pydantic
 passlib
 web3
+itsdangerous
 python-multipart
 timedelta
 redis

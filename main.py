@@ -5,7 +5,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import status
 from datetime import datetime
+from starlette.middleware.sessions import SessionMiddleware
+from fastapi.responses import JSONResponse
 from database.database import db
+import secrets
 
 from database.database import init_web3_and_db, get_web3_config
 from database.redis import redis_config
@@ -87,6 +90,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+SECRET_KEY = secrets.token_urlsafe(32)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="d2869214c83d29ae0839da9c4e1f64118cc69d974f3b05b9ab372211f1f27c95",
+    max_age=None
+)
+
 app.include_router(discovery_router, prefix="/api/discovery", tags=["discovery"])
 
 
@@ -106,7 +117,7 @@ def main():
 
     logger.info("Running the application...")
     config = Config()
-    config.bind = ["localhost:9999"]
+    config.bind = ["0.0.0.0:9999"]
     config.reload = True
 
     asyncio.run(serve(app, config))

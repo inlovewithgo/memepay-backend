@@ -101,20 +101,6 @@ class Token(BaseModel):
     updated_at: datetime
 
 
-class TokenData(BaseModel):
-    model_config = ConfigDict(
-        arbitrary_types_allowed=True,
-        json_encoders={ObjectId: str}
-    )
-
-    user_id: str
-    access_token: str
-    refresh_token: str
-    token_type: str = "bearer"
-    expires_at: datetime
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-
 class UserInDB(BaseModel):
     id: Optional[str] = None
     username: str
@@ -137,9 +123,61 @@ class WalletResponse(BaseModel):
 class PhraseRequest(BaseModel):
     phrase: str
 
+
 class TokenData(BaseModel):
     pubkey: str
     mint: str
     owner: str
     decimals: int
     balance: str
+
+
+class TwitterUser(BaseModel):
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    twitter_id: str
+    twitter_username: str
+    twitter_profile_image: Optional[str]
+    twitter_token: Optional[dict]
+    username: str
+    email: str
+    full_name: str
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = None
+    last_login: Optional[datetime] = None
+
+
+class TwitterTokenData(BaseModel):
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+
+    user_id: str
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+    expires_at: datetime
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class SessionData(BaseModel):
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    session_token: str
+    user_id: str
+    twitter_id: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: datetime
+    is_active: bool = True
+    last_accessed: Optional[datetime] = None
+    user_agent: Optional[str] = None
+    ip_address: Optional[str] = None
