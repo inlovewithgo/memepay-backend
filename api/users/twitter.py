@@ -17,17 +17,9 @@ router = APIRouter(
     tags=["Authentication"]
 )
 
-TWITTER_CLIENT_ID = "TWxMaG9YYnpUOHFZamRMTkNWTVk6MTpjaQ"
-TWITTER_CLIENT_SECRET = "kLvL8-1hcA-8farl2cnRHbEEweunyONzrTR2PWKtW6FAtVja1Z"
-TWITTER_SCOPES = ["tweet.read", "users.read", "offline.access"]
 TWITTER_API_KEY = "w44a559b3SZ6aZv4BQf5vF7w4"
 TWITTER_API_SECRET = "FQgrfQ8Rw3qUYTjGo4ZqFNNIIOY5n5hadHqdSsgYE4yOOYYrzz"
 TWITTER_CALLBACK_URL = "http://localhost:3000/api/auth/twitter/callback"
-
-oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorizationUrl="https://twitter.com/i/oauth2/authorize",
-    tokenUrl="https://api.twitter.com/2/oauth2/token"
-)
 
 class TwitterAuth:
     def __init__(self):
@@ -45,7 +37,11 @@ class TwitterAuth:
 
     def get_auth_url(self):
         try:
-            return self.auth.get_authorization_url()
+            auth_url = self.auth.get_authorization_url()
+            return auth_url, {
+                'oauth_token': self.auth.request_token['oauth_token'],
+                'oauth_token_secret': self.auth.request_token['oauth_token_secret']
+            }
         except tweepy.TweepError as e:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -57,14 +53,13 @@ class TwitterAuth:
                 detail=f"Unexpected error: {str(e)}"
             )
 
-
 @router.get("/twitter/login")
 async def twitter_login(request: Request):
     twitter_auth = TwitterAuth()
     try:
-        auth_url = twitter_auth.auth.get_authorization_url()
-        request.session['oauth_token'] = twitter_auth.auth.request_token['oauth_token']
-        request.session['oauth_token_secret'] = twitter_auth.auth.request_token['oauth_token_secret']
+        auth_url, token_data = twitter_auth.get_auth_url()
+        request.session['oauth_token'] = token_data['oauth_token']
+        request.session['oauth_token_secret'] = token_data['oauth_token_secret']
         return {"auth_url": auth_url}
     except Exception as e:
         raise HTTPException(
@@ -91,10 +86,14 @@ async def verify_session(
         if not session:
             return {"isValid": False}
 
+        await db.sessions.update_one(
+            {"session_token": session_token},
+            {"$set": {"last_accessed": datetime.utcnow()}}
+        )
+
         return {"isValid": True}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/twitter/callback")
 async def twitter_callback(
@@ -112,7 +111,6 @@ async def twitter_callback(
             )
         
         stored_oauth_token = request.session.get('oauth_token')
-        
         if oauth_token != stored_oauth_token:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -120,7 +118,6 @@ async def twitter_callback(
             )
 
         twitter_auth = TwitterAuth()
-        
         oauth_token_secret = request.session.get('oauth_token_secret')
         if not oauth_token_secret:
             raise HTTPException(
@@ -163,7 +160,6 @@ async def twitter_callback(
         )
 
         user = await db.users.find_one({"twitter_id": str(twitter_user.id)})
-        
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -186,15 +182,22 @@ async def twitter_callback(
             }}
         )
 
+        # Create session with additional metadata
         session_token = str(uuid4())
-        
         await db.sessions.insert_one({
             "session_token": session_token,
             "user_id": str(user["_id"]),
             "twitter_id": twitter_user.id,
             "created_at": datetime.utcnow(),
-            "expires_at": datetime.utcnow() + timedelta(days=7)
+            "expires_at": datetime.utcnow() + timedelta(days=7),
+            "last_accessed": datetime.utcnow(),
+            "user_agent": request.headers.get("user-agent"),
+            "ip_address": request.client.host if request.client else None
         })
+
+        # Clean up session data
+        request.session.pop('oauth_token', None)
+        request.session.pop('oauth_token_secret', None)
 
         return {
             "status": "success",
@@ -202,12 +205,14 @@ async def twitter_callback(
                 "id": str(user["_id"]),
                 "username": user["username"],
                 "full_name": user["full_name"],
-                "twitter_username": user["twitter_username"],
+                "twitter_username": twitter_user.screen_name,
                 "profile_image": twitter_user.profile_image_url_https
             },
             "session_token": session_token
         }
 
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -13,7 +13,8 @@ class Database:
         self.db = None
         self.tokens = None
         self.pairs = None
-        self.users = None  # Add users collection
+        self.users = None
+        self.sessions = None
 
     async def initialize(self):
         try:
@@ -24,13 +25,24 @@ class Database:
             self.db = self.client["user_management"]
             self.tokens = self.db.tokens
             self.pairs = self.db.pairs
-            self.users = self.db.users  # Initialize users collection
-            
-            # Create indexes for users collection
+            self.users = self.db.users
+            self.sessions = self.db.sessions
+
             await self.users.create_index([("email", ASCENDING)], unique=True)
             await self.users.create_index([("username", ASCENDING)], unique=True)
+            await self.sessions.create_index(
+                [("session_token", ASCENDING)],
+                unique=True
+            )
+            await self.sessions.create_index(
+                [("expires_at", ASCENDING)],
+                expireAfterSeconds=2592000
+            )
+            await self.sessions.create_index([("user_id", ASCENDING)])
             
-            # Existing indexes
+            await self.tokens.create_index([("address", ASCENDING)], unique=True)
+            await self.tokens.create_index([("symbol", ASCENDING)])
+            await self.pairs.create_index([("address", ASCENDING)], unique=True)
             await self.tokens.create_index([("address", ASCENDING)], unique=True)
             await self.tokens.create_index([("symbol", ASCENDING)])
             await self.pairs.create_index([("address", ASCENDING)], unique=True)
