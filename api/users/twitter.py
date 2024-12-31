@@ -19,7 +19,7 @@ router = APIRouter(
 
 TWITTER_API_KEY = "w44a559b3SZ6aZv4BQf5vF7w4"
 TWITTER_API_SECRET = "FQgrfQ8Rw3qUYTjGo4ZqFNNIIOY5n5hadHqdSsgYE4yOOYYrzz"
-TWITTER_CALLBACK_URL = "http://localhost:3000/api/auth/twitter/callback"
+TWITTER_CALLBACK_URL = "http://localhost:3000/twitterlogin"
 
 class TwitterAuth:
     def __init__(self):
@@ -60,7 +60,10 @@ async def twitter_login(request: Request):
         auth_url, token_data = twitter_auth.get_auth_url()
         request.session['oauth_token'] = token_data['oauth_token']
         request.session['oauth_token_secret'] = token_data['oauth_token_secret']
-        return {"auth_url": auth_url}
+        return {
+            "auth_url": auth_url,
+            "oauth_token": token_data['oauth_token']
+        }
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -182,7 +185,6 @@ async def twitter_callback(
             }}
         )
 
-        # Create session with additional metadata
         session_token = str(uuid4())
         await db.sessions.insert_one({
             "session_token": session_token,
@@ -195,7 +197,6 @@ async def twitter_callback(
             "ip_address": request.client.host if request.client else None
         })
 
-        # Clean up session data
         request.session.pop('oauth_token', None)
         request.session.pop('oauth_token_secret', None)
 
