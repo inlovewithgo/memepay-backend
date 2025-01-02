@@ -98,6 +98,33 @@ async def verify_session(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.get("/twitter/logout")
+async def twitter_logout(
+    request: Request,
+    db: Database = Depends(get_database)
+):
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+        session_token = auth_header.split(' ')[1]
+        session = await db.sessions.find_one({
+            "session_token": session_token,
+            "expires_at": {"$gt": datetime.utcnow()}
+        })
+
+        if not session:
+            raise HTTPException(status_code=401, detail="Invalid session token")
+
+        await db.sessions.delete_one({"session_token": session_token})
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 @router.get("/twitter/callback")
 async def twitter_callback(
     request: Request,
