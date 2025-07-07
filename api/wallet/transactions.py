@@ -86,7 +86,7 @@ async def get_transactions(request: TransactionRequest):
                             tx_type = "SOL Transfer"
                             if len(pre_balances) > 0 and len(post_balances) > 0:
                                 amount = abs(post_balances[0] - pre_balances[0]) / 1e9
-                        elif program_id == "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA":
+                        elif program_id == "":
                             tx_type = "Token Transfer"
                             if hasattr(instruction, 'parsed') and instruction.parsed:
                                 parsed_data = instruction.parsed

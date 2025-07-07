@@ -13,7 +13,7 @@ class RedisConfig:
 
     def __init__(self):
         if not hasattr(self, 'initialized'):
-            self.REDIS_URL = "redis://:exrilatmemepay@194.15.36.168:6379"
+            self.REDIS_URL = ""
             self.client = None
             self.initialized = False
 

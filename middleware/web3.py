@@ -6,8 +6,8 @@ from database.database import db
 async def init_web3_and_db():
     BSC_NODE = "https://bsc-dataseed.binance.org/"
     ETHEREUM_NODE = "https://mainnet.infura.io/v3/apikeydaaldeidharbhai"
-    PANCAKESWAP_FACTORY = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
-    UNISWAP_FACTORY = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
+    PANCAKESWAP_FACTORY = ""
+    UNISWAP_FACTORY = ""
 
     w3_bsc = Web3(Web3.HTTPProvider(BSC_NODE))
     w3_eth = Web3(Web3.HTTPProvider(ETHEREUM_NODE))
@@ -33,5 +33,5 @@ w3_bsc = None
 w3_eth = None
 tokens_collection = None
 pairs_collection = None
-PANCAKESWAP_FACTORY = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
-UNISWAP_FACTORY = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
+PANCAKESWAP_FACTORY = ""
+UNISWAP_FACTORY = ""

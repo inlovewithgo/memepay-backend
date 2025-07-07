@@ -181,3 +181,4 @@ class SessionData(BaseModel):
     last_accessed: Optional[datetime] = None
     user_agent: Optional[str] = None
     ip_address: Optional[str] = None
+

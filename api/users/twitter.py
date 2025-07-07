@@ -17,8 +17,8 @@ router = APIRouter(
     tags=["Authentication"]
 )
 
-TWITTER_API_KEY = "w44a559b3SZ6aZv4BQf5vF7w4"
-TWITTER_API_SECRET = "FQgrfQ8Rw3qUYTjGo4ZqFNNIIOY5n5hadHqdSsgYE4yOOYYrzz"
+TWITTER_API_KEY = ""
+TWITTER_API_SECRET = ""
 TWITTER_CALLBACK_URL = "http://localhost:3000/twitterlogin"
 
 class TwitterAuth:

@@ -8,7 +8,7 @@ from fastapi import status
 
 class Database:
     def __init__(self):
-        self.mongodb_url = "mongodb://exril:exrilatmemepay@194.15.36.168:27017/admin"
+        self.mongodb_url = ""
         self.client = None
         self.db = None
         self.tokens = None
@@ -58,8 +58,8 @@ class Web3Config:
     def __init__(self):
         self.BSC_NODE = "https://bsc-dataseed.binance.org/"
         self.ETHEREUM_NODE = "https://mainnet.infura.io/v3/apikeydaaldeidharbhai"
-        self.PANCAKESWAP_FACTORY = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
-        self.UNISWAP_FACTORY = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
+        self.PANCAKESWAP_FACTORY = ""
+        self.UNISWAP_FACTORY = ""
         self.w3_bsc = None
         self.w3_eth = None
 
@@ -84,7 +84,7 @@ async def init_web3_and_db():
             "w3_eth": web3_config.w3_eth,
             "tokens_collection": db.tokens,
             "pairs_collection": db.pairs,
-            "users_collection": db.users,  # Add users collection
+            "users_collection": db.users,
             "PANCAKESWAP_FACTORY": web3_config.PANCAKESWAP_FACTORY,
             "UNISWAP_FACTORY": web3_config.UNISWAP_FACTORY,
             "redis_client": redis_config.client

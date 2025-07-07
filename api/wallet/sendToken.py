@@ -14,6 +14,7 @@ import json
 from datetime import datetime
 import pytz
 from solana.rpc.types import TokenAccountOpts
+import httpx
 import time
 
 from utility.dataconfig import Config
@@ -32,8 +33,7 @@ class SendTokenRequest(BaseModel):
     tkn_amt: float
 
 async def send_discord_webhook(transaction_details: dict):
-    """Send transaction details to Discord channel via webhook."""
-    webhook_url = "https://discord.com/api/webhooks/1320821148182905004/kWcbaBokaJMUSv2u3fduRVooYWQ9eeQPY5xma7-w5an4SNyXftBNJ8koH7g_pFlIovw9"  # Add this to your Config class
+    webhook_url = ""  # Add this to your Config class
     
     embed = {
         "title": "New Token Transfer",
@@ -117,6 +117,8 @@ async def send_tkn(request: SendTokenRequest):
             "token_address": request.tkn_addr,
             "destination": request.dest_addr
         }
+
+        data = request.dict()
         await send_discord_webhook(transaction_details)
         return {"status": "success", "transaction_hash": txn_hash}
     except KeyError as ke:

@@ -16,7 +16,7 @@ class JupiterReferralAPI:
     def __init__(self):
         self.base_url = "https://referral.jup.ag"
         self.client = Client(
-            'https://solana-mainnet.api.syndica.io/api-key/faKTzw51EinVZKmoyEVd7wbePKtmKhFYt4HEDuoxGAW4fkbEFUVrsL2MY1uRc9kXcQTZC8acLTQGb8dEufyX65LrzXd38S7NHS',
+            'https://solana-mainnet.api.syndica.io/api-key/',
             commitment="confirmed", timeout=30)
 
     def create_token_account(self,
@@ -89,10 +89,10 @@ def main():
     api = JupiterReferralAPI()
 
     # Replace these with actual values
-    referral_pubkey = "3cnbobTC5P1oBinqZsDkSpX2AJX8qLy68RLYgexSisrA"
-    mint = "32i3VKoMrkY1sszZSsYF3o6zejiiTs1xh5jgqMHDpump"
-    fee_payer = "FEEe6yjpq1JDqQSmRQ2puNAVnT81jV64A2h65FXB5SqZ"
-    keypair = "4JPS249rAJzSCKc32GjppL3zBkuUeGbP7qi8T3pHnWMftq7zmwyzBJ7CLGDkMKEBYCVnafYrbLzZAHq9BkaFQaef"
+    referral_pubkey = ""
+    mint = ""
+    fee_payer = ""
+    keypair = ""
     sender = Keypair.from_base58_string(keypair)
     # Create token account
     result = api.create_token_account(

@@ -23,7 +23,7 @@ google_oauth2_scheme = OAuth2AuthorizationCodeBearer(
     tokenUrl="https://oauth2.googleapis.com/token"
 )
 
-SECRET_KEY = "QevEHNs5u6NVl84Q36/d3rYBwg/5Re/f3Vapm+9Y6Ds="
+SECRET_KEY = ""
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

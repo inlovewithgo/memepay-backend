@@ -94,7 +94,7 @@ SECRET_KEY = secrets.token_urlsafe(32)
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key="d2869214c83d29ae0839da9c4e1f64118cc69d974f3b05b9ab372211f1f27c95",
+    secret_key="",
     max_age=None
 )
 

